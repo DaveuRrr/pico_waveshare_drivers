@@ -13,6 +13,11 @@ add_subdirectory(./lib/LCD)
 add_subdirectory(./lib/Touch)
 add_subdirectory(./lib/QMI8658)
 
+include_directories(./lib/Config)
+include_directories(./lib/LCD)
+include_directories(./lib/Touch)
+include_directories(./lib/QMI8658)
+
 target_link_libraries(RP2350-Touch-LCD-1.28  
                       LCD 
                       Touch
