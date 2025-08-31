@@ -1,5 +1,5 @@
 # Waveshare Drivers Library
-Copy of Waveshare Code to be used as a library...
+A Copy of Waveshare Code to be used as a library. Original code contains an MIT license
 
 #### Waveshare
 You can find information on the [RP2350-Touch-LCD-1.28 here](https://www.waveshare.com/wiki/RP2350-Touch-LCD-1.28). I grabbed the [LVGL](https://files.waveshare.com/wiki/RP2350-Touch-LCD-1.28/RP2350-Touch-LCD-1.28-LVGL.zip) version since I will be using LVGL with my projects. None of the LVGL code is here, you would need to grab it from [LVGL](https://github.com/lvgl/lvgl)
