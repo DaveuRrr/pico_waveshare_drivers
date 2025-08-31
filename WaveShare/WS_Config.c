@@ -1,5 +1,5 @@
 /*****************************************************************************
-* | File      	:   DEV_Config.c
+* | File      	:   device_Config.c
 * | Author      :
 * | Function    :   Hardware underlying interface
 * | Info        :
@@ -26,7 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 ******************************************************************************/
-#include "DEV_Config.h"
+#include "WS_Config.h"
 
 uint slice_num;
 uint dma_tx;
@@ -35,38 +35,38 @@ dma_channel_config c;
 /**
  * delay x ms
  **/
-void DEV_Delay_ms(uint32_t xms)
+void WS_Delay_ms(uint32_t xms)
 {
     sleep_ms(xms);
 }
 
-void DEV_Delay_us(uint32_t xus)
+void WS_Delay_us(uint32_t xus)
 {
     sleep_us(xus);
 }
 
-void DEV_GPIO_Init(void)
+void WS_GPIO_Init(void)
 {
 
-    DEV_GPIO_Mode(LCD_RST_PIN, 1);
-    DEV_GPIO_Mode(LCD_DC_PIN, 1);
-    DEV_GPIO_Mode(LCD_CS_PIN, 1);
-    DEV_GPIO_Mode(LCD_BL_PIN, 1);
+    WS_GPIO_Mode(LCD_RST_PIN, 1);
+    WS_GPIO_Mode(LCD_DC_PIN, 1);
+    WS_GPIO_Mode(LCD_CS_PIN, 1);
+    WS_GPIO_Mode(LCD_BL_PIN, 1);
 
-    DEV_Digital_Write(LCD_CS_PIN, 1);
-    DEV_Digital_Write(LCD_DC_PIN, 0);
-    DEV_Digital_Write(LCD_BL_PIN, 1);
+    WS_Digital_Write(LCD_CS_PIN, 1);
+    WS_Digital_Write(LCD_DC_PIN, 0);
+    WS_Digital_Write(LCD_BL_PIN, 1);
 }
 
 /**
  * GPIO read and write
  **/
-void DEV_Digital_Write(uint16_t Pin, uint8_t Value)
+void WS_Digital_Write(uint16_t Pin, uint8_t Value)
 {
     gpio_put(Pin, Value);
 }
 
-uint8_t DEV_Digital_Read(uint16_t Pin)
+uint8_t WS_Digital_Read(uint16_t Pin)
 {
     return gpio_get(Pin);
 }
@@ -74,12 +74,12 @@ uint8_t DEV_Digital_Read(uint16_t Pin)
 /**
  * SPI
  **/
-void DEV_SPI_WriteByte(spi_inst_t *SPI_PORT,uint8_t Value)
+void WS_SPI_WriteByte(spi_inst_t *SPI_PORT,uint8_t Value)
 {
     spi_write_blocking(SPI_PORT, &Value, 1);
 }
 
-void DEV_SPI_Write_nByte(spi_inst_t *SPI_PORT,uint8_t pData[], uint32_t Len)
+void WS_SPI_Write_nByte(spi_inst_t *SPI_PORT,uint8_t pData[], uint32_t Len)
 {
     spi_write_blocking(SPI_PORT, pData, Len);
 }
@@ -88,25 +88,25 @@ void DEV_SPI_Write_nByte(spi_inst_t *SPI_PORT,uint8_t pData[], uint32_t Len)
  * I2C
  **/
 
-void DEV_I2C_Write_Byte(i2c_inst_t *I2C_PORT,uint8_t addr, uint8_t reg, uint8_t Value)
+void WS_I2C_Write_Byte(i2c_inst_t *I2C_PORT,uint8_t addr, uint8_t reg, uint8_t Value)
 {
     uint8_t data[2] = {reg, Value};
     i2c_write_blocking(I2C_PORT, addr, data, 2, false);
 }
 
-void DEV_I2C_Write_nByte(i2c_inst_t *I2C_PORT,uint8_t addr, uint8_t *pData, uint32_t Len)
+void WS_I2C_Write_nByte(i2c_inst_t *I2C_PORT,uint8_t addr, uint8_t *pData, uint32_t Len)
 {
     i2c_write_blocking(I2C_PORT, addr, pData, Len, false);
 }
 
-uint8_t DEV_I2C_Read_Byte(i2c_inst_t *I2C_PORT,uint8_t addr, uint8_t reg)
+uint8_t WS_I2C_Read_Byte(i2c_inst_t *I2C_PORT,uint8_t addr, uint8_t reg)
 {
     uint8_t buf;
     i2c_write_blocking(I2C_PORT,addr,&reg,1,true);
     i2c_read_blocking(I2C_PORT,addr,&buf,1,false);
     return buf;
 }
-void DEV_I2C_Read_nByte(i2c_inst_t *I2C_PORT,uint8_t addr,uint8_t reg, uint8_t *pData, uint32_t Len)
+void WS_I2C_Read_nByte(i2c_inst_t *I2C_PORT,uint8_t addr,uint8_t reg, uint8_t *pData, uint32_t Len)
 {
     i2c_write_blocking(I2C_PORT,addr,&reg,1,true);
     i2c_read_blocking(I2C_PORT,addr,pData,Len,false);
@@ -115,7 +115,7 @@ void DEV_I2C_Read_nByte(i2c_inst_t *I2C_PORT,uint8_t addr,uint8_t reg, uint8_t *
 /**
  * GPIO Mode
  **/
-void DEV_GPIO_Mode(uint16_t Pin, uint16_t Mode)
+void WS_GPIO_Mode(uint16_t Pin, uint16_t Mode)
 {
     gpio_init(Pin);
     if (Mode == 0 || Mode == GPIO_IN)
@@ -131,7 +131,7 @@ void DEV_GPIO_Mode(uint16_t Pin, uint16_t Mode)
 /**
  * KEY Config
  **/
-void DEV_KEY_Config(uint16_t Pin)
+void WS_KEY_Config(uint16_t Pin)
 {
     gpio_init(Pin);
     gpio_pull_up(Pin);
@@ -140,11 +140,11 @@ void DEV_KEY_Config(uint16_t Pin)
 /*
 ** PWM
 */
-void DEV_SET_PWM(uint8_t Value)
+void WS_SET_PWM(uint8_t Value)
 {
     if (Value < 0 || Value > 100)
     {
-        printf("DEV_SET_PWM Error \r\n");
+        printf("WS_SET_PWM Error \r\n");
     }
     else
     {
@@ -154,7 +154,7 @@ void DEV_SET_PWM(uint8_t Value)
 /**
  * IRQ
  **/
-void DEV_IRQ_SET(uint gpio, uint32_t events, gpio_irq_callback_t callback)
+void WS_IRQ_SET(uint gpio, uint32_t events, gpio_irq_callback_t callback)
 {
     gpio_set_irq_enabled_with_callback(gpio,events,true,callback);
 }
@@ -164,7 +164,7 @@ function:	Module Initialize, the library and initialize the pins, SPI protocol
 parameter:
 Info:
 ******************************************************************************/
-uint8_t DEV_Module_Init(void)
+uint8_t WS_Module_Init(void)
 {
     // CLOCK Config
     set_sys_clock_khz(PLL_SYS_KHZ, true);
@@ -178,7 +178,7 @@ uint8_t DEV_Module_Init(void)
 
     stdio_init_all();
     // GPIO Config
-    DEV_GPIO_Init();
+    WS_GPIO_Init();
     // ADC
     adc_init();
     adc_gpio_init(BAT_ADC_PIN);
@@ -201,15 +201,15 @@ uint8_t DEV_Module_Init(void)
     channel_config_set_dreq(&c, spi_get_dreq(LCD_SPI_PORT, true));
     // I2C Config
     i2c_init(SENSOR_I2C_PORT, 400 * 1000);
-    gpio_set_function(DEV_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(DEV_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(DEV_SDA_PIN);
-    gpio_pull_up(DEV_SCL_PIN);
+    gpio_set_function(WS_SDA_PIN, GPIO_FUNC_I2C);
+    gpio_set_function(WS_SCL_PIN, GPIO_FUNC_I2C);
+    gpio_pull_up(WS_SDA_PIN);
+    gpio_pull_up(WS_SCL_PIN);
     // Timer Config
     // IRQ Config
-    DEV_KEY_Config(Touch_INT_PIN);
+    WS_KEY_Config(TOUCH_INT_PIN);
 
-    printf("DEV_Module_Init OK \r\n");
+    printf("WS_Module_Init OK \r\n");
     return 0;
 }
 
@@ -218,6 +218,6 @@ function:	Module exits, closes SPI and BCM2835 library
 parameter:
 Info:
 ******************************************************************************/
-void DEV_Module_Exit(void)
+void WS_Module_Exit(void)
 {
 }

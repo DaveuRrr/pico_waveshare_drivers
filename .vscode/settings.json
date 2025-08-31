@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.bt": "cpp",
+        "*.py": "python",
+        "Device_Config.h": "c",
+        "GC9A01A.h": "c"
+    }
+}

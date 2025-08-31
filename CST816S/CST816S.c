@@ -12,16 +12,17 @@
  *
  ******************************************************************************/
 #include "CST816S.h"
+
 CST816S Touch_CTS816;
 
 void CST816S_I2C_Write(uint8_t reg, uint8_t value)
 {
-    DEV_I2C_Write_Byte(SENSOR_I2C_PORT, CST816_ADDR, reg, value);
+    WS_I2C_Write_Byte(SENSOR_I2C_PORT, CST816_ADDR, reg, value);
 }
 uint8_t CST816S_I2C_Read(uint8_t reg)
 {
     uint8_t res;
-    res = DEV_I2C_Read_Byte(SENSOR_I2C_PORT, CST816_ADDR, reg);
+    res = WS_I2C_Read_Byte(SENSOR_I2C_PORT, CST816_ADDR, reg);
     return res;
 }
 
@@ -35,10 +36,10 @@ uint8_t CST816S_WhoAmI()
 
 void CST816S_Reset()
 {
-    DEV_Digital_Write(Touch_RST_PIN, 0);
-    DEV_Delay_ms(100);
-    DEV_Digital_Write(Touch_RST_PIN, 1);
-    DEV_Delay_ms(100);
+    WS_Digital_Write(Touch_RST_PIN, 0);
+    WS_Delay_ms(100);
+    WS_Digital_Write(Touch_RST_PIN, 1);
+    WS_Delay_ms(100);
 }
 
 uint8_t CST816S_Read_Revision()
@@ -48,10 +49,10 @@ uint8_t CST816S_Read_Revision()
 
 void CST816S_Wake_up()
 {
-    DEV_Digital_Write(Touch_RST_PIN, 0);
-    DEV_Delay_ms(10);
-    DEV_Digital_Write(Touch_RST_PIN, 1);
-    DEV_Delay_ms(50);
+    WS_Digital_Write(Touch_RST_PIN, 0);
+    WS_Delay_ms(10);
+    WS_Digital_Write(Touch_RST_PIN, 1);
+    WS_Delay_ms(50);
     CST816S_I2C_Write(CST816_DisAutoSleep, 0x01);
 }
 

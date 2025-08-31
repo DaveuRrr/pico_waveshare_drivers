@@ -1,5 +1,5 @@
 /*****************************************************************************
-* | File      	:   LCD_1IN28.h
+* | File      	:   GC9A01A.h
 * | Author      :   Waveshare team
 * | Function    :   Hardware underlying interface
 * | Info        :
@@ -11,10 +11,10 @@
 * | Info        :   Basic version
 *
 ******************************************************************************/
-#ifndef __LCD_1IN28_H
-#define __LCD_1IN28_H	
+#ifndef __GC9A01A_H
+#define __GC9A01A_H	
 	
-#include "DEV_Config.h"
+#include "WS_Config.h"
 #include <stdint.h>
 
 #include <stdlib.h>     //itoa()
@@ -22,8 +22,8 @@
 
 
 
-#define LCD_1IN28_HEIGHT 240
-#define LCD_1IN28_WIDTH 240
+#define GC9A01A_HEIGHT 240
+#define GC9A01A_WIDTH 240
 
 
 #define HORIZONTAL 0
@@ -54,19 +54,19 @@ typedef struct{
 	uint16_t WIDTH;
 	uint16_t HEIGHT;
 	uint8_t SCAN_DIR;
-}LCD_1IN28_ATTRIBUTES;
-extern LCD_1IN28_ATTRIBUTES LCD_1IN28;
+}GC9A01A_ATTRIBUTES;
+extern GC9A01A_ATTRIBUTES GC9A01A;
 
 /********************************************************************************
 function:	
 			Macro definition variable name
 ********************************************************************************/
-void LCD_1IN28_Init(uint8_t Scan_dir);
-void LCD_1IN28_Clear(uint16_t Color);
-void LCD_1IN28_Display(uint16_t *Image);
-void LCD_1IN28_DisplayWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t *Image);
-void LCD_1IN28_DisplayPoint(uint16_t X, uint16_t Y, uint16_t Color);
+void GC9A01A_Init(uint8_t Scan_dir);
+void GC9A01A_Clear(uint16_t Color);
+void GC9A01A_Display(uint16_t *Image);
+void GC9A01A_DisplayWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t *Image);
+void GC9A01A_DisplayPoint(uint16_t X, uint16_t Y, uint16_t Color);
 
-void LCD_1IN28_SetWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend);
+void GC9A01A_SetWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend);
 
 #endif

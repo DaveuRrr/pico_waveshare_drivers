@@ -13,7 +13,8 @@
  ******************************************************************************/
 #ifndef __CST816S_H
 #define __CST816S_H
-#include "DEV_Config.h"
+
+#include "WS_Config.h"
 #include <stdlib.h> //itoa()
 #include <stdio.h>
 

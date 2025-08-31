@@ -38,7 +38,7 @@ unsigned char QMI8658_write_reg(unsigned char reg, unsigned char value)
 
 	while ((!ret) && (retry++ < 5))
 	{
-		DEV_I2C_Write_Byte(SENSOR_I2C_PORT,QMI8658_slave_addr, reg, value);
+		WS_I2C_Write_Byte(SENSOR_I2C_PORT,QMI8658_slave_addr, reg, value);
 	}
 	return ret;
 }
@@ -59,7 +59,7 @@ unsigned char QMI8658_read_reg(unsigned char reg, unsigned char *buf, unsigned s
 {
 	unsigned char ret = 0;
 	unsigned int retry = 0;
-	DEV_I2C_Read_nByte(SENSOR_I2C_PORT,QMI8658_slave_addr, reg, buf, len);
+	WS_I2C_Read_nByte(SENSOR_I2C_PORT,QMI8658_slave_addr, reg, buf, len);
 
 	return ret;
 }
@@ -465,16 +465,16 @@ void QMI8658_doCtrl9Command(enum QMI8658_Ctrl9Command cmd)
 	uint8_t val;
 
 	QMI8658_write_reg(QMI8658Register_Ctrl9, cmd);
-	DEV_KEY_Config(DOF_INT1);
+	WS_KEY_Config(DOF_INT1);
 	
 	while (1)
 	{
 		val = QMI8658_readStatus1();
 		printf("3 :%d \r\n",val);
-		printf("1 :%d \r\n",DEV_Digital_Read(DOF_INT1));
+		printf("1 :%d \r\n",WS_Digital_Read(DOF_INT1));
 		if (val & 0x04)
 			break;
-		DEV_Delay_ms(10);
+		WS_Delay_ms(10);
 	}
 }
 void QMI8658_enableWakeOnMotion(void)
