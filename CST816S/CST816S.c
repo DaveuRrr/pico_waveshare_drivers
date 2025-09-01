@@ -36,9 +36,9 @@ uint8_t CST816S_WhoAmI()
 
 void CST816S_Reset()
 {
-    WS_Digital_Write(Touch_RST_PIN, 0);
+    WS_Digital_Write(TOUCH_RST_PIN, 0);
     WS_Delay_ms(100);
-    WS_Digital_Write(Touch_RST_PIN, 1);
+    WS_Digital_Write(TOUCH_RST_PIN, 1);
     WS_Delay_ms(100);
 }
 
@@ -49,9 +49,9 @@ uint8_t CST816S_Read_Revision()
 
 void CST816S_Wake_up()
 {
-    WS_Digital_Write(Touch_RST_PIN, 0);
+    WS_Digital_Write(TOUCH_RST_PIN, 0);
     WS_Delay_ms(10);
-    WS_Digital_Write(Touch_RST_PIN, 1);
+    WS_Digital_Write(TOUCH_RST_PIN, 1);
     WS_Delay_ms(50);
     CST816S_I2C_Write(CST816_DisAutoSleep, 0x01);
 }
