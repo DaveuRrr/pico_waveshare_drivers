@@ -28,7 +28,7 @@ static unsigned short gyro_lsb_div = 0;
 static unsigned short ae_q_lsb_div = (1 << 14);
 static unsigned short ae_v_lsb_div = (1 << 10);
 static unsigned int imu_timestamp = 0;
-static struct QMI8658Config QMI8658_config;
+static struct QMI8658_Config qmi8658_config;
 static unsigned char QMI8658_slave_addr = QMI8658_SLAVE_ADDR_L;
 
 unsigned char QMI8658_write_reg(unsigned char reg, unsigned char value)
@@ -153,38 +153,38 @@ void QMI8658_set_layout(short layout)
 }
 #endif
 
-void QMI8658_config_acc(enum QMI8658_AccRange range, enum QMI8658_AccOdr odr, enum QMI8658_LpfConfig lpfEnable, enum QMI8658_StConfig stEnable)
+void QMI8658_config_acc(enum QMI8658_AccRange range, enum QMI8658_AccOdr odr, enum QMI8658_Lpf_Config lpfEnable, enum QMI8658_St_Config stEnable)
 {
 	unsigned char ctl_dada;
 
 	switch (range)
 	{
-	case QMI8658AccRange_2g:
+	case QMI8658_AccRange_2g:
 		acc_lsb_div = (1 << 14);
 		break;
-	case QMI8658AccRange_4g:
+	case QMI8658_AccRange_4g:
 		acc_lsb_div = (1 << 13);
 		break;
-	case QMI8658AccRange_8g:
+	case QMI8658_AccRange_8g:
 		acc_lsb_div = (1 << 12);
 		break;
-	case QMI8658AccRange_16g:
+	case QMI8658_AccRange_16g:
 		acc_lsb_div = (1 << 11);
 		break;
 	default:
-		range = QMI8658AccRange_8g;
+		range = QMI8658_AccRange_8g;
 		acc_lsb_div = (1 << 12);
 	}
-	if (stEnable == QMI8658St_Enable)
+	if (stEnable == QMI8658_St_Enable)
 		ctl_dada = (unsigned char)range | (unsigned char)odr | 0x80;
 	else
 		ctl_dada = (unsigned char)range | (unsigned char)odr;
 
-	QMI8658_write_reg(QMI8658Register_Ctrl2, ctl_dada);
+	QMI8658_write_reg(QMI8658_Register_Ctrl2, ctl_dada);
 	// set LPF & HPF
-	QMI8658_read_reg(QMI8658Register_Ctrl5, &ctl_dada, 1);
+	QMI8658_read_reg(QMI8658_Register_Ctrl5, &ctl_dada, 1);
 	ctl_dada &= 0xf0;
-	if (lpfEnable == QMI8658Lpf_Enable)
+	if (lpfEnable == QMI8658_Lpf_Enable)
 	{
 		ctl_dada |= A_LSP_MODE_3;
 		ctl_dada |= 0x01;
@@ -194,11 +194,11 @@ void QMI8658_config_acc(enum QMI8658_AccRange range, enum QMI8658_AccOdr odr, en
 		ctl_dada &= ~0x01;
 	}
 	ctl_dada = 0x00;
-	QMI8658_write_reg(QMI8658Register_Ctrl5, ctl_dada);
+	QMI8658_write_reg(QMI8658_Register_Ctrl5, ctl_dada);
 	// set LPF & HPF
 }
 
-void QMI8658_config_gyro(enum QMI8658_GyrRange range, enum QMI8658_GyrOdr odr, enum QMI8658_LpfConfig lpfEnable, enum QMI8658_StConfig stEnable)
+void QMI8658_config_gyro(enum QMI8658_GyrRange range, enum QMI8658_GyrOdr odr, enum QMI8658_Lpf_Config lpfEnable, enum QMI8658_St_Config stEnable)
 {
 	// Set the CTRL3 register to configure dynamic range and ODR
 	unsigned char ctl_dada;
@@ -206,47 +206,47 @@ void QMI8658_config_gyro(enum QMI8658_GyrRange range, enum QMI8658_GyrOdr odr, e
 	// Store the scale factor for use when processing raw data
 	switch (range)
 	{
-	case QMI8658GyrRange_32dps:
+	case QMI8658_GyrRange_32dps:
 		gyro_lsb_div = 1024;
 		break;
-	case QMI8658GyrRange_64dps:
+	case QMI8658_GyrRange_64dps:
 		gyro_lsb_div = 512;
 		break;
-	case QMI8658GyrRange_128dps:
+	case QMI8658_GyrRange_128dps:
 		gyro_lsb_div = 256;
 		break;
-	case QMI8658GyrRange_256dps:
+	case QMI8658_GyrRange_256dps:
 		gyro_lsb_div = 128;
 		break;
-	case QMI8658GyrRange_512dps:
+	case QMI8658_GyrRange_512dps:
 		gyro_lsb_div = 64;
 		break;
-	case QMI8658GyrRange_1024dps:
+	case QMI8658_GyrRange_1024dps:
 		gyro_lsb_div = 32;
 		break;
-	case QMI8658GyrRange_2048dps:
+	case QMI8658_GyrRange_2048dps:
 		gyro_lsb_div = 16;
 		break;
-	case QMI8658GyrRange_4096dps:
+	case QMI8658_GyrRange_4096dps:
 		gyro_lsb_div = 8;
 		break;
 	default:
-		range = QMI8658GyrRange_512dps;
+		range = QMI8658_GyrRange_512dps;
 		gyro_lsb_div = 64;
 		break;
 	}
 
-	if (stEnable == QMI8658St_Enable)
+	if (stEnable == QMI8658_St_Enable)
 		ctl_dada = (unsigned char)range | (unsigned char)odr | 0x80;
 	else
 		ctl_dada = (unsigned char)range | (unsigned char)odr;
-	QMI8658_write_reg(QMI8658Register_Ctrl3, ctl_dada);
+	QMI8658_write_reg(QMI8658_Register_Ctrl3, ctl_dada);
 
 	// Conversion from degrees/s to rad/s if necessary
 	// set LPF & HPF
-	QMI8658_read_reg(QMI8658Register_Ctrl5, &ctl_dada, 1);
+	QMI8658_read_reg(QMI8658_Register_Ctrl5, &ctl_dada, 1);
 	ctl_dada &= 0x0f;
-	if (lpfEnable == QMI8658Lpf_Enable)
+	if (lpfEnable == QMI8658_Lpf_Enable)
 	{
 		ctl_dada |= G_LSP_MODE_3;
 		ctl_dada |= 0x10;
@@ -256,54 +256,54 @@ void QMI8658_config_gyro(enum QMI8658_GyrRange range, enum QMI8658_GyrOdr odr, e
 		ctl_dada &= ~0x10;
 	}
 	ctl_dada = 0x00;
-	QMI8658_write_reg(QMI8658Register_Ctrl5, ctl_dada);
+	QMI8658_write_reg(QMI8658_Register_Ctrl5, ctl_dada);
 	// set LPF & HPF
 }
 
 void QMI8658_config_mag(enum QMI8658_MagDev device, enum QMI8658_MagOdr odr)
 {
-	QMI8658_write_reg(QMI8658Register_Ctrl4, device | odr);
+	QMI8658_write_reg(QMI8658_Register_Ctrl4, device | odr);
 }
 
 void QMI8658_config_ae(enum QMI8658_AeOdr odr)
 {
-	// QMI8658_config_acc(QMI8658AccRange_8g, AccOdr_1000Hz, Lpf_Enable, St_Enable);
-	// QMI8658_config_gyro(QMI8658GyrRange_2048dps, GyrOdr_1000Hz, Lpf_Enable, St_Enable);
-	QMI8658_config_acc(QMI8658_config.accRange, QMI8658_config.accOdr, QMI8658Lpf_Enable, QMI8658St_Disable);
-	QMI8658_config_gyro(QMI8658_config.gyrRange, QMI8658_config.gyrOdr, QMI8658Lpf_Enable, QMI8658St_Disable);
-	QMI8658_config_mag(QMI8658_config.magDev, QMI8658_config.magOdr);
-	QMI8658_write_reg(QMI8658Register_Ctrl6, odr);
+	// QMI8658_config_acc(QMI8658_AccRange_8g, AccOdr_1000Hz, Lpf_Enable, St_Enable);
+	// QMI8658_config_gyro(QMI8658_GyrRange_2048dps, GyrOdr_1000Hz, Lpf_Enable, St_Enable);
+	QMI8658_config_acc(qmi8658_config.accRange, qmi8658_config.accOdr, QMI8658_Lpf_Enable, QMI8658_St_Disable);
+	QMI8658_config_gyro(qmi8658_config.gyrRange, qmi8658_config.gyrOdr, QMI8658_Lpf_Enable, QMI8658_St_Disable);
+	QMI8658_config_mag(qmi8658_config.magDev, qmi8658_config.magOdr);
+	QMI8658_write_reg(QMI8658_Register_Ctrl6, odr);
 }
 
-unsigned char QMI8658_readStatus0(void)
+unsigned char QMI8658_read_status0(void)
 {
 	unsigned char status[2];
 
-	QMI8658_read_reg(QMI8658Register_Status0, status, sizeof(status));
+	QMI8658_read_reg(QMI8658_Register_Status0, status, sizeof(status));
 	// printf("status[0x%x	0x%x]\n",status[0],status[1]);
 
 	return status[0];
 }
 /*!
- * \brief Blocking read of data status register 1 (::QMI8658Register_Status1).
+ * \brief Blocking read of data status register 1 (::QMI8658_Register_Status1).
  * \returns Status byte \see STATUS1 for flag definitions.
  */
-unsigned char QMI8658_readStatus1(void)
+unsigned char QMI8658_read_status1(void)
 {
 	unsigned char status;
 
-	QMI8658_read_reg(QMI8658Register_Status1, &status, sizeof(status));
+	QMI8658_read_reg(QMI8658_Register_Status1, &status, sizeof(status));
 
 	return status;
 }
 
-float QMI8658_readTemp(void)
+float QMI8658_read_temp(void)
 {
 	unsigned char buf[2];
 	short temp = 0;
 	float temp_f = 0;
 
-	QMI8658_read_reg(QMI8658Register_Tempearture_L, buf, 2);
+	QMI8658_read_reg(QMI8658_Register_Tempearture_L, buf, 2);
 	temp = ((short)buf[1] << 8) | buf[0];
 	temp_f = (float)temp / 256.0f;
 
@@ -315,7 +315,7 @@ void QMI8658_read_acc_xyz(float acc_xyz[3])
 	unsigned char buf_reg[6];
 	short raw_acc_xyz[3];
 
-	QMI8658_read_reg(QMI8658Register_Ax_L, buf_reg, 6); // 0x19, 25
+	QMI8658_read_reg(QMI8658_Register_Ax_L, buf_reg, 6); // 0x19, 25
 	raw_acc_xyz[0] = (short)((unsigned short)(buf_reg[1] << 8) | (buf_reg[0]));
 	raw_acc_xyz[1] = (short)((unsigned short)(buf_reg[3] << 8) | (buf_reg[2]));
 	raw_acc_xyz[2] = (short)((unsigned short)(buf_reg[5] << 8) | (buf_reg[4]));
@@ -332,7 +332,7 @@ void QMI8658_read_gyro_xyz(float gyro_xyz[3])
 	unsigned char buf_reg[6];
 	short raw_gyro_xyz[3];
 
-	QMI8658_read_reg(QMI8658Register_Gx_L, buf_reg, 6); // 0x1f, 31
+	QMI8658_read_reg(QMI8658_Register_Gx_L, buf_reg, 6); // 0x1f, 31
 	raw_gyro_xyz[0] = (short)((unsigned short)(buf_reg[1] << 8) | (buf_reg[0]));
 	raw_gyro_xyz[1] = (short)((unsigned short)(buf_reg[3] << 8) | (buf_reg[2]));
 	raw_gyro_xyz[2] = (short)((unsigned short)(buf_reg[5] << 8) | (buf_reg[4]));
@@ -356,7 +356,7 @@ void QMI8658_read_xyz(float acc[3], float gyro[3], unsigned int *tim_count)
 	{
 		unsigned char buf[3];
 		unsigned int timestamp;
-		QMI8658_read_reg(QMI8658Register_Timestamp_L, buf, 3); // 0x18	24
+		QMI8658_read_reg(QMI8658_Register_Timestamp_L, buf, 3); // 0x18	24
 		timestamp = (unsigned int)(((unsigned int)buf[2] << 16) | ((unsigned int)buf[1] << 8) | buf[0]);
 		if (timestamp > imu_timestamp)
 			imu_timestamp = timestamp;
@@ -366,7 +366,7 @@ void QMI8658_read_xyz(float acc[3], float gyro[3], unsigned int *tim_count)
 		*tim_count = imu_timestamp;
 	}
 
-	QMI8658_read_reg(QMI8658Register_Ax_L, buf_reg, 12); // 0x19, 25
+	QMI8658_read_reg(QMI8658_Register_Ax_L, buf_reg, 12); // 0x19, 25
 	raw_acc_xyz[0] = (short)((unsigned short)(buf_reg[1] << 8) | (buf_reg[0]));
 	raw_acc_xyz[1] = (short)((unsigned short)(buf_reg[3] << 8) | (buf_reg[2]));
 	raw_acc_xyz[2] = (short)((unsigned short)(buf_reg[5] << 8) | (buf_reg[4]));
@@ -414,7 +414,7 @@ void QMI8658_read_xyz_raw(short raw_acc_xyz[3], short raw_gyro_xyz[3], unsigned 
 	{
 		unsigned char buf[3];
 		unsigned int timestamp;
-		QMI8658_read_reg(QMI8658Register_Timestamp_L, buf, 3); // 0x18	24
+		QMI8658_read_reg(QMI8658_Register_Timestamp_L, buf, 3); // 0x18	24
 		timestamp = (unsigned int)(((unsigned int)buf[2] << 16) | ((unsigned int)buf[1] << 8) | buf[0]);
 		if (timestamp > imu_timestamp)
 			imu_timestamp = timestamp;
@@ -423,7 +423,7 @@ void QMI8658_read_xyz_raw(short raw_acc_xyz[3], short raw_gyro_xyz[3], unsigned 
 
 		*tim_count = imu_timestamp;
 	}
-	QMI8658_read_reg(QMI8658Register_Ax_L, buf_reg, 12); // 0x19, 25
+	QMI8658_read_reg(QMI8658_Register_Ax_L, buf_reg, 12); // 0x19, 25
 
 	raw_acc_xyz[0] = (short)((unsigned short)(buf_reg[1] << 8) | (buf_reg[0]));
 	raw_acc_xyz[1] = (short)((unsigned short)(buf_reg[3] << 8) | (buf_reg[2]));
@@ -440,7 +440,7 @@ void QMI8658_read_ae(float quat[4], float velocity[3])
 	short raw_q_xyz[4];
 	short raw_v_xyz[3];
 
-	QMI8658_read_reg(QMI8658Register_Q1_L, buf_reg, 14);
+	QMI8658_read_reg(QMI8658_Register_Q1_L, buf_reg, 14);
 	raw_q_xyz[0] = (short)((unsigned short)(buf_reg[1] << 8) | (buf_reg[0]));
 	raw_q_xyz[1] = (short)((unsigned short)(buf_reg[3] << 8) | (buf_reg[2]));
 	raw_q_xyz[2] = (short)((unsigned short)(buf_reg[5] << 8) | (buf_reg[4]));
@@ -460,16 +460,16 @@ void QMI8658_read_ae(float quat[4], float velocity[3])
 	velocity[2] = (float)(raw_v_xyz[2] * 1.0f) / ae_v_lsb_div;
 }
 
-void QMI8658_doCtrl9Command(enum QMI8658_Ctrl9Command cmd)
+void QMI8658_doCtrl9Command(enum QMI8658_Ctrl9_Command cmd)
 {
 	uint8_t val;
 
-	QMI8658_write_reg(QMI8658Register_Ctrl9, cmd);
+	QMI8658_write_reg(QMI8658_Register_Ctrl9, cmd);
 	WS_KEY_Config(DOF_INT1);
 	
 	while (1)
 	{
-		val = QMI8658_readStatus1();
+		val = QMI8658_read_status1();
 		printf("3 :%d \r\n",val);
 		printf("1 :%d \r\n",WS_Digital_Read(DOF_INT1));
 		if (val & 0x04)
@@ -477,53 +477,58 @@ void QMI8658_doCtrl9Command(enum QMI8658_Ctrl9Command cmd)
 		WS_Delay_ms(10);
 	}
 }
-void QMI8658_enableWakeOnMotion(void)
+void QMI8658_enable_wake_on_motion(void)
 {
 	unsigned char womCmd[3];
 	enum QMI8658_Interrupt interrupt = QMI8658_Int1;
-	enum QMI8658_InterruptState initialState = QMI8658State_low;
-	enum QMI8658_WakeOnMotionThreshold threshold = QMI8658WomThreshold_low;
+	enum QMI8658_InterruptState initialState = QMI8658_State_low;
+	enum QMI8658_WakeOnMotionThreshold threshold = QMI8658_WomThreshold_low;
 	unsigned char blankingTime = 0x00;
 	const unsigned char blankingTimeMask = 0x3F;
 
-	QMI8658_enableSensors(QMI8658_CTRL7_DISABLE_ALL);
-	QMI8658_config_acc(QMI8658AccRange_2g, QMI8658AccOdr_LowPower_21Hz, QMI8658Lpf_Disable, QMI8658St_Disable);
+	QMI8658_enable_sensors(QMI8658_CTRL7_DISABLE_ALL);
+	QMI8658_config_acc(QMI8658_AccRange_2g, QMI8658_AccOdr_LowPower_21Hz, QMI8658_Lpf_Disable, QMI8658_St_Disable);
 
-	womCmd[0] = QMI8658Register_Cal1_L; // WoM Threshold: absolute value in mg (with 1mg/LSB resolution)
+	womCmd[0] = QMI8658_Register_Cal1_L; // WoM Threshold: absolute value in mg (with 1mg/LSB resolution)
 	womCmd[1] = threshold;
 	womCmd[2] = (unsigned char)interrupt | (unsigned char)initialState | (blankingTime & blankingTimeMask);
-	QMI8658_write_reg(QMI8658Register_Cal1_L, womCmd[1]);
-	QMI8658_write_reg(QMI8658Register_Cal1_H, womCmd[2]);
+	QMI8658_write_reg(QMI8658_Register_Cal1_L, womCmd[1]);
+	QMI8658_write_reg(QMI8658_Register_Cal1_H, womCmd[2]);
 
 	
 
 	QMI8658_doCtrl9Command(QMI8658_Ctrl9_Cmd_WoM_Setting);
-	QMI8658_enableSensors(QMI8658_CTRL7_ACC_ENABLE);
+	QMI8658_enable_sensors(QMI8658_CTRL7_ACC_ENABLE);
 
 }
 
-void QMI8658_disableWakeOnMotion(void)
+void QMI8658_disable_wake_on_motion(void)
 {
-	QMI8658_enableSensors(QMI8658_CTRL7_DISABLE_ALL);
-	QMI8658_write_reg(QMI8658Register_Cal1_L, 0);
+	QMI8658_enable_sensors(QMI8658_CTRL7_DISABLE_ALL);
+	QMI8658_write_reg(QMI8658_Register_Cal1_L, 0);
 	// QMI8658_doCtrl9Command(QMI8658_Ctrl9_Cmd_WoM_Setting);
 }
 
-void QMI8658_enableSensors(unsigned char enableFlags)
+void QMI8658_enable_sensors(unsigned char enableFlags)
 {
 	if (enableFlags & QMI8658_CONFIG_AE_ENABLE)
 	{
 		enableFlags |= QMI8658_CTRL7_ACC_ENABLE | QMI8658_CTRL7_GYR_ENABLE;
 	}
 
-	QMI8658_write_reg(QMI8658Register_Ctrl7, enableFlags & QMI8658_CTRL7_ENABLE_MASK);
+	QMI8658_write_reg(QMI8658_Register_Ctrl7, enableFlags & QMI8658_CTRL7_ENABLE_MASK);
 }
 
-void QMI8658_Config_apply(struct QMI8658Config const *config)
+void QMI8658_config_apply(struct QMI8658_Config const *config)
 {
-	unsigned char fisSensors = config->inputSelection;
-
-	if (fisSensors & QMI8658_CONFIG_AE_ENABLE)
+	// Configure pedometer FIRST if needed (before accelerometer)
+	if (config->enablePedometer)
+	{
+		QMI8658_config_pedometer(&config->pedoConfig);
+		QMI8658_enable_pedometer();
+	}
+	// Fusion / Inertia Sensors
+	if (config->inputSelection & QMI8658_CONFIG_AE_ENABLE)
 	{
 		QMI8658_config_ae(config->aeOdr);
 	}
@@ -531,11 +536,11 @@ void QMI8658_Config_apply(struct QMI8658Config const *config)
 	{
 		if (config->inputSelection & QMI8658_CONFIG_ACC_ENABLE)
 		{
-			QMI8658_config_acc(config->accRange, config->accOdr, QMI8658Lpf_Enable, QMI8658St_Disable);
+			QMI8658_config_acc(config->accRange, config->accOdr, QMI8658_Lpf_Enable, QMI8658_St_Disable);
 		}
 		if (config->inputSelection & QMI8658_CONFIG_GYR_ENABLE)
 		{
-			QMI8658_config_gyro(config->gyrRange, config->gyrOdr, QMI8658Lpf_Enable, QMI8658St_Disable);
+			QMI8658_config_gyro(config->gyrRange, config->gyrOdr, QMI8658_Lpf_Enable, QMI8658_St_Disable);
 		}
 	}
 
@@ -543,10 +548,11 @@ void QMI8658_Config_apply(struct QMI8658Config const *config)
 	{
 		QMI8658_config_mag(config->magDev, config->magOdr);
 	}
-	QMI8658_enableSensors(fisSensors);
+
+	QMI8658_enable_sensors(config->inputSelection);
 }
 
-unsigned char QMI8658_init(void)
+unsigned char QMI8658_init(QMI8658_Config configuration)
 {
 	unsigned char QMI8658_chip_id = 0x00;
 	unsigned char QMI8658_revision_id = 0x00;
@@ -562,8 +568,8 @@ unsigned char QMI8658_init(void)
 		while ((QMI8658_chip_id != 0x05) && (retry++ < 5))
 		{
 
-			QMI8658_read_reg(QMI8658Register_WhoAmI, &QMI8658_chip_id, 1);
-			QMI8658_printf("QMI8658Register_WhoAmI = 0x%x\n", QMI8658_chip_id);
+			QMI8658_read_reg(QMI8658_Register_WhoAmI, &QMI8658_chip_id, 1);
+			QMI8658_printf("QMI8658_Register_WhoAmI = 0x%x\n", QMI8658_chip_id);
 		}
 		if (QMI8658_chip_id == 0x05)
 		{
@@ -571,38 +577,41 @@ unsigned char QMI8658_init(void)
 		}
 		iCount++;
 	}
-	QMI8658_read_reg(QMI8658Register_Revision, &QMI8658_revision_id, 1);
+	QMI8658_read_reg(QMI8658_Register_Revision, &QMI8658_revision_id, 1);
 	if (QMI8658_chip_id == 0x05)
 	{
-		QMI8658_printf("QMI8658_init slave=0x%x  \r\nQMI8658Register_WhoAmI=0x%x 0x%x\n", QMI8658_slave_addr, QMI8658_chip_id, QMI8658_revision_id);
-		QMI8658_write_reg(QMI8658Register_Ctrl1, 0x60);
-		QMI8658_config.inputSelection = QMI8658_CONFIG_ACCGYR_ENABLE; // QMI8658_CONFIG_ACCGYR_ENABLE;
-		QMI8658_config.accRange = QMI8658AccRange_8g;
-		QMI8658_config.accOdr = QMI8658AccOdr_1000Hz;
-		QMI8658_config.gyrRange = QMI8658GyrRange_512dps; // QMI8658GyrRange_2048dps   QMI8658GyrRange_1024dps
-		QMI8658_config.gyrOdr = QMI8658GyrOdr_1000Hz;
-		QMI8658_config.magOdr = QMI8658MagOdr_125Hz;
-		QMI8658_config.magDev = MagDev_AKM09918;
-		QMI8658_config.aeOdr = QMI8658AeOdr_128Hz;
-
-		QMI8658_Config_apply(&QMI8658_config);
+		QMI8658_printf("QMI8658_init slave=0x%x  \r\nQMI8658_Register_WhoAmI=0x%x 0x%x\n", QMI8658_slave_addr, QMI8658_chip_id, QMI8658_revision_id);
+		//QMI8658_write_reg(QMI8658_Register_Ctrl1, 0x60);
+		//qmi8658_config.inputSelection = QMI8658_CONFIG_ACCGYR_ENABLE; // QMI8658_CONFIG_ACCGYR_ENABLE;
+		//qmi8658_config.accRange = QMI8658_AccRange_4g;
+		//qmi8658_config.accOdr = QMI8658_AccOdr_125Hz;
+		//qmi8658_config.gyrRange = QMI8658_GyrRange_512dps; // QMI8658_GyrRange_2048dps   QMI8658_GyrRange_1024dps
+		//qmi8658_config.gyrOdr = QMI8658_GyrOdr_1000Hz;
+		//qmi8658_config.magOdr = QMI8658_MagOdr_125Hz;
+		//qmi8658_config.magDev = QMI8658_MagDev_AKM09918;
+		//qmi8658_config.aeOdr = QMI8658_AeOdr_128Hz;
+		
+		qmi8658_config = configuration;
+		QMI8658_config_apply(&qmi8658_config);
 		if (1)
 		{
 			unsigned char read_data = 0x00;
-			QMI8658_read_reg(QMI8658Register_Ctrl1, &read_data, 1);
-			QMI8658_printf("QMI8658Register_Ctrl1=0x%x \n", read_data);
-			QMI8658_read_reg(QMI8658Register_Ctrl2, &read_data, 1);
-			QMI8658_printf("QMI8658Register_Ctrl2=0x%x \n", read_data);
-			QMI8658_read_reg(QMI8658Register_Ctrl3, &read_data, 1);
-			QMI8658_printf("QMI8658Register_Ctrl3=0x%x \n", read_data);
-			QMI8658_read_reg(QMI8658Register_Ctrl4, &read_data, 1);
-			QMI8658_printf("QMI8658Register_Ctrl4=0x%x \n", read_data);
-			QMI8658_read_reg(QMI8658Register_Ctrl5, &read_data, 1);
-			QMI8658_printf("QMI8658Register_Ctrl5=0x%x \n", read_data);
-			QMI8658_read_reg(QMI8658Register_Ctrl6, &read_data, 1);
-			QMI8658_printf("QMI8658Register_Ctrl6=0x%x \n", read_data);
-			QMI8658_read_reg(QMI8658Register_Ctrl7, &read_data, 1);
-			QMI8658_printf("QMI8658Register_Ctrl7=0x%x \n", read_data);
+			QMI8658_read_reg(QMI8658_Register_Ctrl1, &read_data, 1);
+			QMI8658_printf("QMI8658_Register_Ctrl1=0x%x \n", read_data);
+			QMI8658_read_reg(QMI8658_Register_Ctrl2, &read_data, 1);
+			QMI8658_printf("QMI8658_Register_Ctrl2=0x%x \n", read_data);
+			QMI8658_read_reg(QMI8658_Register_Ctrl3, &read_data, 1);
+			QMI8658_printf("QMI8658_Register_Ctrl3=0x%x \n", read_data);
+			QMI8658_read_reg(QMI8658_Register_Ctrl4, &read_data, 1);
+			QMI8658_printf("QMI8658_Register_Ctrl4=0x%x \n", read_data);
+			QMI8658_read_reg(QMI8658_Register_Ctrl5, &read_data, 1);
+			QMI8658_printf("QMI8658_Register_Ctrl5=0x%x \n", read_data);
+			QMI8658_read_reg(QMI8658_Register_Ctrl6, &read_data, 1);
+			QMI8658_printf("QMI8658_Register_Ctrl6=0x%x \n", read_data);
+			QMI8658_read_reg(QMI8658_Register_Ctrl7, &read_data, 1);
+			QMI8658_printf("QMI8658_Register_Ctrl7=0x%x \n", read_data);
+			QMI8658_read_reg(QMI8658_Register_Ctrl8, &read_data, 1);
+			QMI8658_printf("QMI8658_Register_Ctrl8=0x%x \n", read_data);
 		}
 		//		QMI8658_set_layout(2);
 		return 1;
@@ -614,4 +623,72 @@ unsigned char QMI8658_init(void)
 		return 0;
 	}
 	// return QMI8658_chip_id;
+}
+
+void QMI8658_config_pedometer(struct QMI8658_PedoConfig const *config)
+{
+	// First phase: Send first set of parameters
+	QMI8658_write_reg(QMI8658_Register_Cal1_L, config->sample_count);
+	QMI8658_write_reg(QMI8658_Register_Cal1_H, config->sample_count);
+	QMI8658_write_reg(QMI8658_Register_Cal2_L, config->fix_peak2peak);
+	QMI8658_write_reg(QMI8658_Register_Cal2_H, config->fix_peak2peak);
+	QMI8658_write_reg(QMI8658_Register_Cal3_L, config->fix_peak);
+	QMI8658_write_reg(QMI8658_Register_Cal3_H, config->fix_peak);
+	QMI8658_write_reg(QMI8658_Register_Cal4_H, 0x01);  // First phase marker
+	
+	// Trigger first CTRL9 command
+	QMI8658_doCtrl9Command(QMI8658_Ctrl9_Cmd_ConfigurePedometer);
+	
+	// Second phase: Send pedometer control configuration
+	QMI8658_write_reg(QMI8658_Register_Cal1_L, config->time_up);
+	QMI8658_write_reg(QMI8658_Register_Cal1_H, config->time_up);
+	QMI8658_write_reg(QMI8658_Register_Cal2_L, config->time_low);
+	QMI8658_write_reg(QMI8658_Register_Cal2_H, config->time_count_entry;
+	QMI8658_write_reg(QMI8658_Register_Cal3_L, config->fix_precision);
+	QMI8658_write_reg(QMI8658_Register_Cal3_H, config->signal_count);
+	QMI8658_write_reg(QMI8658_Register_Cal4_H, 0x02);  // Second phase marker
+	
+	// Trigger second CTRL9 command
+	QMI8658_doCtrl9Command(QMI8658_Ctrl9_Cmd_ConfigurePedometer);
+}
+
+void QMI8658_enable_pedometer(void)
+{
+	unsigned char ctrl_data;
+	
+	QMI8658_read_reg(QMI8658_Register_Ctrl8, &ctrl_data, 1);
+	ctrl_data |= QMI8658_PedoMode_Enable;
+	QMI8658_write_reg(QMI8658_Register_Ctrl8, ctrl_data);
+	
+	//QMI8658_config_acc(QMI8658_AccRange_4g, QMI8658_AccOdr_125Hz, QMI8658_Lpf_Enable, QMI8658_St_Disable);
+	//QMI8658_enable_sensors(QMI8658_CONFIG_ACC_ENABLE);
+}
+
+void QMI8658_disable_pedometer(void)
+{
+	unsigned char ctrl_data;
+	
+	QMI8658_read_reg(QMI8658_Register_Ctrl8, &ctrl_data, 1);
+	ctrl_data &= ~QMI8658_PedoMode_Enable;
+	QMI8658_write_reg(QMI8658_Register_Ctrl8, ctrl_data);
+}
+
+void QMI8658_read_step_count(unsigned int *stepCount)
+{
+	unsigned char buf[3];
+	
+	if (stepCount)
+	{
+		QMI8658_read_reg(QMI8658_Register_STEP_CNT_LOW, buf, 3);
+		*stepCount = (unsigned int)buf[0] | 
+		            ((unsigned int)buf[1] << 8) | 
+		            ((unsigned int)buf[2] << 16);
+	}
+}
+
+void QMI8658_reset_step_count(void)
+{
+	QMI8658_write_reg(QMI8658_Register_STEP_CNT_LOW, 0x00);
+	QMI8658_write_reg(QMI8658_Register_STEP_CNT_MIDL, 0x00);
+	QMI8658_write_reg(QMI8658_Register_STEP_CNT_HIGH, 0x00);
 }
