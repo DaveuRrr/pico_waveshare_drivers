@@ -552,7 +552,7 @@ void QMI8658_config_apply(struct QMI8658_Config const *config)
 	QMI8658_enable_sensors(config->inputSelection);
 }
 
-unsigned char QMI8658_init(QMI8658_Config configuration)
+unsigned char QMI8658_init(struct QMI8658_Config configuration)
 {
 	unsigned char QMI8658_chip_id = 0x00;
 	unsigned char QMI8658_revision_id = 0x00;
