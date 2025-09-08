@@ -462,20 +462,60 @@ void QMI8658_read_ae(float quat[4], float velocity[3])
 
 void QMI8658_doCtrl9Command(enum QMI8658_Ctrl9_Command cmd)
 {
-	uint8_t val;
+	uint8_t statusint_val;
+	int timeout_count = 0;
+	const int MAX_TIMEOUT = 100; // 1 second timeout (10ms * 100)
 
+	// Step 1: Write command to CTRL9 register
 	QMI8658_write_reg(QMI8658_Register_Ctrl9, cmd);
-	WS_KEY_Config(DOF_INT1);
+	printf("[Debug] Sent CTRL9 command: 0x%02x\n", cmd);
 	
-	while (1)
+	// Step 2: Wait for STATUSINT.bit7 to be set (command completion)
+	while (timeout_count < MAX_TIMEOUT)
 	{
-		val = QMI8658_read_status1();
-		printf("3 :%d \r\n",val);
-		printf("1 :%d \r\n",WS_Digital_Read(DOF_INT1));
-		if (val & 0x04)
+		QMI8658_read_reg(QMI8658_Register_StatusInt, &statusint_val, 1);
+		printf("[Debug] StatusInt: 0x%02x, timeout: %d\n", statusint_val, timeout_count);
+		
+		// Check if bit 7 is set (0x80 mask)
+		if (statusint_val & 0x80)
+		{
+			printf("[Debug] Command completed, sending ACK\n");
 			break;
+		}
+		
 		WS_Delay_ms(10);
+		timeout_count++;
 	}
+	
+	if (timeout_count >= MAX_TIMEOUT)
+	{
+		printf("[Error] CTRL9 command timeout - no completion signal\n");
+		return;
+	}
+	
+	// Step 3: Send acknowledgment by writing 0x00 to CTRL9
+	QMI8658_write_reg(QMI8658_Register_Ctrl9, 0x00); // CTRL_CMD_ACK
+	printf("[Debug] Sent CTRL9 ACK (0x00)\n");
+	
+	// Step 4: Wait for STATUSINT.bit7 to be cleared (ACK processed)
+	timeout_count = 0;
+	while (timeout_count < MAX_TIMEOUT)
+	{
+		QMI8658_read_reg(QMI8658_Register_StatusInt, &statusint_val, 1);
+		printf("[Debug] StatusInt after ACK: 0x%02x\n", statusint_val);
+		
+		// Check if bit 7 is cleared (command fully processed)
+		if (!(statusint_val & 0x80))
+		{
+			printf("[Debug] CTRL9 command handshake complete\n");
+			return;
+		}
+		
+		WS_Delay_ms(10);
+		timeout_count++;
+	}
+	
+	printf("[Warning] CTRL9 ACK timeout - bit7 not cleared\n");
 }
 void QMI8658_enable_wake_on_motion(void)
 {
@@ -581,7 +621,7 @@ unsigned char QMI8658_init(struct QMI8658_Config configuration)
 	if (QMI8658_chip_id == 0x05)
 	{
 		QMI8658_printf("QMI8658_init slave=0x%x  \r\nQMI8658_Register_WhoAmI=0x%x 0x%x\n", QMI8658_slave_addr, QMI8658_chip_id, QMI8658_revision_id);
-		//QMI8658_write_reg(QMI8658_Register_Ctrl1, 0x60);
+		QMI8658_write_reg(QMI8658_Register_Ctrl1, 0x60);
 		//qmi8658_config.inputSelection = QMI8658_CONFIG_ACCGYR_ENABLE; // QMI8658_CONFIG_ACCGYR_ENABLE;
 		//qmi8658_config.accRange = QMI8658_AccRange_4g;
 		//qmi8658_config.accOdr = QMI8658_AccOdr_125Hz;
@@ -590,7 +630,7 @@ unsigned char QMI8658_init(struct QMI8658_Config configuration)
 		//qmi8658_config.magOdr = QMI8658_MagOdr_125Hz;
 		//qmi8658_config.magDev = QMI8658_MagDev_AKM09918;
 		//qmi8658_config.aeOdr = QMI8658_AeOdr_128Hz;
-		
+
 		qmi8658_config = configuration;
 		QMI8658_config_apply(&qmi8658_config);
 		if (1)
