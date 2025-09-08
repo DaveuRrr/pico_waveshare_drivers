@@ -289,6 +289,19 @@ enum QMI8658_GyrUnit
     QMI8658_GyrUnit_rads /*! \brief Gyroscope output in rad/s. */
 };
 
+// Forward declaration or move PedoConfig struct here
+struct QMI8658_PedoConfig
+{
+    unsigned char sample_count;                 /*! \brief Indicates the count of sample batch/window for calculation (0-255) */
+    unsigned char fix_peak2peak;                /*! \brief Indicates the threshold of the valid peak-to-peak detection (0-255) */
+    unsigned char fix_peak;                     /*! \brief Indicates the threshold of the peak detection comparing to average (0-255) */
+    unsigned char time_up;                      /*! \brief Indicates the maximum duration (timeout window) for a step. (0-255) */
+    unsigned char time_low;                     /*! \brief Indicates the minimum duration for a step. (0-255) */
+    unsigned char time_count_entry;             /*! \brief Indicates the minimum continuous steps to start the valid step counting. (0-255) */
+    unsigned char fix_precision;                /*! \brief 0 is recommended (0-255) */
+    unsigned char signal_count;                 /*! \brief The amount of steps when to update the pedometer output registers. (0-255) */
+};
+
 struct QMI8658_Config
 {
     unsigned char inputSelection;           /*! \brief Sensor fusion input selection. */
@@ -403,18 +416,6 @@ enum QMI8658_PedoStepSizeMode
 {
     QMI8658_PedoStepSize_Normal = 0x00,   /*! \brief Normal step size mode. */
     QMI8658_PedoStepSize_Sensitivity = 0x10 /*! \brief High sensitivity step size mode. */
-};
-
-struct QMI8658_PedoConfig
-{
-    unsigned char sample_count;                 /*! \brief Indicates the count of sample batch/window for calculation (0-255) */
-    unsigned char fix_peak2peak;                /*! \brief Indicates the threshold of the valid peak-to-peak detection (0-255) */
-    unsigned char fix_peak;                     /*! \brief Indicates the threshold of the peak detection comparing to average (0-255) */
-    unsigned char time_up;                      /*! \brief Indicates the maximum duration (timeout window) for a step. (0-255) */
-    unsigned char time_low;                     /*! \brief Indicates the minimum duration for a step. (0-255) */
-    unsigned char time_count_entry;             /*! \brief Indicates the minimum continuous steps to start the valid step counting. (0-255) */
-    unsigned char fix_precision;                /*! \brief 0 is recommended (0-255) */
-    unsigned char signal_count;                 /*! \brief The amount of steps when to update the pedometer output registers. (0-255) */
 };
 
 extern unsigned char QMI8658_write_reg(unsigned char reg, unsigned char value);

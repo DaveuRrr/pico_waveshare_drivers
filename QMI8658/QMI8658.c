@@ -643,7 +643,7 @@ void QMI8658_config_pedometer(struct QMI8658_PedoConfig const *config)
 	QMI8658_write_reg(QMI8658_Register_Cal1_L, config->time_up);
 	QMI8658_write_reg(QMI8658_Register_Cal1_H, config->time_up);
 	QMI8658_write_reg(QMI8658_Register_Cal2_L, config->time_low);
-	QMI8658_write_reg(QMI8658_Register_Cal2_H, config->time_count_entry;
+	QMI8658_write_reg(QMI8658_Register_Cal2_H, config->time_count_entry);
 	QMI8658_write_reg(QMI8658_Register_Cal3_L, config->fix_precision);
 	QMI8658_write_reg(QMI8658_Register_Cal3_H, config->signal_count);
 	QMI8658_write_reg(QMI8658_Register_Cal4_H, 0x02);  // Second phase marker
