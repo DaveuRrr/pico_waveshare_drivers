@@ -438,5 +438,7 @@ extern void QMI8658_enable_pedometer(void);
 extern void QMI8658_disable_pedometer(void);
 extern void QMI8658_read_step_count(unsigned int *stepCount);
 extern void QMI8658_reset_step_count(void);
+extern void QMI8658_config_pedometer_interrupt(void);
+extern unsigned char QMI8658_check_pedometer_interrupt(void);
 
 #endif

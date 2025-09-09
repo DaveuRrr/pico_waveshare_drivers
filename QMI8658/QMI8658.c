@@ -732,3 +732,44 @@ void QMI8658_reset_step_count(void)
 	QMI8658_write_reg(QMI8658_Register_STEP_CNT_MIDL, 0x00);
 	QMI8658_write_reg(QMI8658_Register_STEP_CNT_HIGH, 0x00);
 }
+
+void QMI8658_config_pedometer_interrupt(void)
+{
+	unsigned char ctrl1_data, ctrl8_data;
+	
+	// Read current CTRL1 register
+	QMI8658_read_reg(QMI8658_Register_Ctrl1, &ctrl1_data, 1);
+	
+	// Enable INT1 pin (set bit 3)
+	ctrl1_data |= 0x08;  // CTRL1.bit3 = 1 for INT1 enable
+	QMI8658_write_reg(QMI8658_Register_Ctrl1, ctrl1_data);
+	
+	// Read current CTRL8 register  
+	QMI8658_read_reg(QMI8658_Register_Ctrl8, &ctrl8_data, 1);
+	
+	// Configure pedometer interrupt routing:
+	// - Set bit 6 = 1 to route pedometer interrupt to INT1 
+	// - Set bit 7 = 0 to enable INT1 interrupt output
+	ctrl8_data |= 0x40;   // CTRL8.bit6 = 1 (route to INT1)
+	ctrl8_data &= ~0x80;  // CTRL8.bit7 = 0 (enable INT1 output)
+	QMI8658_write_reg(QMI8658_Register_Ctrl8, ctrl8_data);
+	
+	printf("[Debug] Pedometer interrupt configured - CTRL1: 0x%02x, CTRL8: 0x%02x\n", 
+	       ctrl1_data, ctrl8_data);
+}
+
+unsigned char QMI8658_check_pedometer_interrupt(void)
+{
+	unsigned char status1_data;
+	
+	// Read STATUS1 register
+	QMI8658_read_reg(QMI8658_Register_Status1, &status1_data, 1);
+	
+	// Check if pedometer interrupt bit (bit 4) is set
+	if (status1_data & 0x10) {
+		printf("[Debug] Pedometer interrupt detected - STATUS1: 0x%02x\n", status1_data);
+		return 1;
+	}
+	
+	return 0;
+}

@@ -60,8 +60,8 @@
 #define TOUCH_INT_PIN   (21)
 #define TOUCH_RST_PIN   (22)
 
-#define DOF_INT1        (23)
-#define DOF_INT2        (24)
+#define IMU_INT1        (23)
+#define IMU_INT2        (24)
 
 #define BAT_ADC_PIN     (29)
 #define BAR_CHANNEL     (3)
