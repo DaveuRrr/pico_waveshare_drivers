@@ -53,8 +53,10 @@
 #define LCD_CS_PIN      (9)
 #define LCD_CLK_PIN     (10)
 #define LCD_MOSI_PIN    (11)
+#ifndef LCD_RST_PIN
 #define LCD_MISO_PIN    (12)
 #define LCD_RST_PIN     (13)
+#endif
 #define LCD_BL_PIN      (25)
 
 #define TOUCH_INT_PIN   (21)
