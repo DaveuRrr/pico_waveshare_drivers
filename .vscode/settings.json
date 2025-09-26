@@ -2,7 +2,11 @@
     "files.associations": {
         "*.bt": "cpp",
         "*.py": "python",
+        "*.S": "pio",
         "Device_Config.h": "c",
-        "GC9A01A.h": "c"
+        "GC9A01A.h": "c",
+        "cst816s.h": "c",
+        "stdlib.h": "c",
+        "st7789v2.h": "c"
     }
 }

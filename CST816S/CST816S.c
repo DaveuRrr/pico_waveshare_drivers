@@ -1,66 +1,107 @@
 /*****************************************************************************
- * | File      	:   CST816S.c
- * | Author      :   Waveshare team
- * | Function    :   Hardware underlying interface
- * | Info        :
- *                Used to shield the underlying layers of each master
- *                and enhance portability
- *----------------
- * |	This version:   V1.0
- * | Date        :   2022-12-02
- * | Info        :   Basic version
- *
+* | File      	:   CST816S.c
+* | Author      :   Waveshare team, Modified by Dave uRrr
+* | Function    :   Hardware underlying interface
+* | Info        :   Used to shield the underlying layers of each master and enhance portability
+*----------------
+* | This version:   V1.1
+* | Date        :   2025-09-23
+* | Info        :   Removed WS_Config.h dependency, requires user-defined pin macros
+*
  ******************************************************************************/
+
 #include "CST816S.h"
 
 CST816S Touch_CTS816;
 
-void CST816S_I2C_Write(uint8_t reg, uint8_t value)
+/********************************************************************************
+ * @brief           Writes a value to CST816S I2C register
+ * @param address   I2C register address to write to
+ * @param value     Value to write to the register
+********************************************************************************/
+void CST816S_I2C_Write(uint8_t address, uint8_t value)
 {
-    WS_I2C_Write_Byte(SENSOR_I2C_PORT, CST816_ADDR, reg, value);
-}
-uint8_t CST816S_I2C_Read(uint8_t reg)
-{
-    uint8_t res;
-    res = WS_I2C_Read_Byte(SENSOR_I2C_PORT, CST816_ADDR, reg);
-    return res;
+    uint8_t data[2] = {address, value};
+    i2c_write_blocking(SENSOR_I2C_PORT, CST816_ADDR, data, 2, false);
 }
 
+/********************************************************************************
+ * @brief           Reads a value from CST816S I2C register
+ * @param address   I2C register address to read from
+ * @return          Value read from the register
+********************************************************************************/
+uint8_t CST816S_I2C_Read(uint8_t address)
+{
+    uint8_t result;
+    i2c_write_blocking(SENSOR_I2C_PORT, CST816_ADDR, &address, 1, true);
+    i2c_read_blocking(SENSOR_I2C_PORT, CST816_ADDR, &result, 1, false);
+    return result;
+}
+
+/********************************************************************************
+ * @brief           Reads buffer from CST816S I2C register
+ * @param address   I2C register address to read from
+********************************************************************************/
+void CST816S_I2C_Read_Buffer(uint8_t address, uint8_t *buffer, uint32_t len)
+{
+    i2c_write_blocking(SENSOR_I2C_PORT, CST816_ADDR, &address, 1, true);
+    i2c_read_blocking(SENSOR_I2C_PORT, CST816_ADDR, buffer, len, false);
+}
+
+/********************************************************************************
+ * @brief           Checks if CST816S chip is detected by reading chip ID
+ * @return          true if chip detected, false otherwise
+********************************************************************************/
 uint8_t CST816S_WhoAmI()
 {
-    if (CST816S_I2C_Read(CST816_ChipID) == 0xB5)
-        return true;
-    else
-        return false;
+    if (CST816S_I2C_Read(CST816_ChipID) == 0xB5) return true;
+    else return false;
 }
 
+/********************************************************************************
+ * @brief           Hardware reset of CST816S touch controller
+********************************************************************************/
 void CST816S_Reset()
 {
-    WS_Digital_Write(TOUCH_RST_PIN, 0);
-    WS_Delay_ms(100);
-    WS_Digital_Write(TOUCH_RST_PIN, 1);
-    WS_Delay_ms(100);
+    gpio_put(TOUCH_RST_PIN, 0);
+    sleep_ms(100);
+    gpio_put(TOUCH_RST_PIN, 1);
+    sleep_ms(100);
 }
 
+/********************************************************************************
+ * @brief           Reads the firmware version/revision of CST816S
+ * @return          Firmware version number
+********************************************************************************/
 uint8_t CST816S_Read_Revision()
 {
     return CST816S_I2C_Read(CST816_FwVersion);
 }
 
+/********************************************************************************
+ * @brief           Wakes up CST816S from sleep mode
+********************************************************************************/
 void CST816S_Wake_up()
 {
-    WS_Digital_Write(TOUCH_RST_PIN, 0);
-    WS_Delay_ms(10);
-    WS_Digital_Write(TOUCH_RST_PIN, 1);
-    WS_Delay_ms(50);
+    gpio_put(TOUCH_RST_PIN, 0);
+    sleep_ms(10);
+    gpio_put(TOUCH_RST_PIN, 1);
+    sleep_ms(50);
     CST816S_I2C_Write(CST816_DisAutoSleep, 0x01);
 }
 
+/********************************************************************************
+ * @brief           Disables auto-sleep mode on CST816S
+********************************************************************************/
 void CST816S_Stop_Sleep()
 {
     CST816S_I2C_Write(CST816_DisAutoSleep, 0x01);
 }
 
+/********************************************************************************
+ * @brief           Sets the operating mode of CST816S
+ * @param mode      Operating mode (Point, Gesture, or All modes)
+********************************************************************************/
 void CST816S_Set_Mode(uint8_t mode)
 {
     if (mode == CST816S_Point_Mode)
@@ -86,10 +127,29 @@ void CST816S_Set_Mode(uint8_t mode)
         
 }
 
-
-
+/********************************************************************************
+ * @brief           Initializes CST816S touch controller
+ * @param mode      Operating mode to set after initialization
+ * @return          true if initialization successful, false otherwise
+********************************************************************************/
 uint8_t CST816S_init(uint8_t mode)
 {
+    // Checks if I2C is up
+    if (i2c_get_baudrate(SENSOR_I2C_PORT) == 0)
+    {
+        // I2C Config
+        i2c_init(SENSOR_I2C_PORT, 400 * 1000);
+        gpio_set_function(SENSOR_SDA_PIN, GPIO_FUNC_I2C);
+        gpio_set_function(SENSOR_SCL_PIN, GPIO_FUNC_I2C);
+        gpio_pull_up(SENSOR_SDA_PIN);
+        gpio_pull_up(SENSOR_SCL_PIN);
+    }
+
+    // IRQ Config
+    gpio_init(TOUCH_INT_PIN);
+    gpio_pull_up(TOUCH_INT_PIN);
+    gpio_set_dir(TOUCH_INT_PIN, GPIO_IN);
+
     uint8_t bRet, Rev;
     CST816S_Reset();
     bRet = CST816S_WhoAmI();
@@ -117,6 +177,10 @@ uint8_t CST816S_init(uint8_t mode)
     return true;
 }
 
+/********************************************************************************
+ * @brief           Reads current touch point coordinates
+ * @return          CST816S struct containing x,y coordinates and mode
+********************************************************************************/
 CST816S CST816S_Get_Point()
 {
     uint8_t x_point_h, x_point_l, y_point_h, y_point_l;
@@ -132,9 +196,14 @@ CST816S CST816S_Get_Point()
 
     return Touch_CTS816;
 }
+
+/********************************************************************************
+ * @brief           Reads current gesture from CST816S
+ * @return          Gesture ID (Up, Down, Left, Right, Click, etc.)
+********************************************************************************/
 uint8_t CST816S_Get_Gesture(void)
 {
     uint8_t gesture;
-    gesture=CST816S_I2C_Read(CST816_GestureID);
+    gesture = CST816S_I2C_Read(CST816_GestureID);
     return gesture;
 }

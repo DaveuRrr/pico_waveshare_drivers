@@ -1,22 +1,31 @@
 /*****************************************************************************
- * | File      	:   CST816S.h
- * | Author      :   Waveshare team
- * | Function    :   Hardware underlying interface
- * | Info        :
- *                Used to shield the underlying layers of each master
- *                and enhance portability
- *----------------
- * |	This version:   V1.0
- * | Date        :   2022-12-02
- * | Info        :   Basic version
- *
+* | File      	:   CST816S.h
+* | Author      :   Waveshare team, Modified by Dave uRrr
+* | Function    :   Hardware underlying interface
+* | Info        :	Used to shield the underlying layers of each master and enhance portability
+*----------------
+* |	This version:   V1.1
+* | Date        :   2025-09-23
+* | Info        :   Removed WS_Config.h dependency, requires user-defined pin macros
+*
  ******************************************************************************/
+
 #ifndef __CST816S_H
 #define __CST816S_H
 
-#include "WS_Config.h"
-#include <stdlib.h> //itoa()
+#include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "hardware/gpio.h"
+#include "hardware/i2c.h"
+
+// #define SENSOR_I2C_PORT 	(i2c1)
+// #define SENSOR_SDA_PIN  	(6)
+// #define SENSOR_SCL_PIN  	(7)
+// #define TOUCH_INT_PIN   (21)
+// #define TOUCH_RST_PIN   (22)
 
 #define CST816_ADDR (0x15)
 
@@ -94,8 +103,7 @@ extern CST816S Touch_CTS816;
 uint8_t CST816S_init(uint8_t mode);
 CST816S CST816S_Get_Point();
 uint8_t CST816S_Get_Gesture(void);
-
 uint8_t CST816S_I2C_Read(uint8_t reg);
-
 void CST816S_Set_Mode(uint8_t mode);
+
 #endif

@@ -1,10 +1,29 @@
+/*****************************************************************************
+* | File      	:   QMI8658.h
+* | Author      :   Waveshare team, Modified by Dave uRrr
+* | Function    :   Hardware underlying interface
+* | Info        :   Used to shield the underlying layers of each master and enhance portability
+*----------------
+* | This version:   V1.1
+* | Date        :   2025-09-23
+* | Info        :   Removed WS_Config.h dependency, requires user-defined pin macros
+*
+ *****************************************************************************/
+
 #ifndef QMI8658_H
 #define QMI8658_H
 
-#include "WS_Config.h"
-#include <stdint.h>
-#include <stdlib.h> //itoa()
+#include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "hardware/gpio.h"
+#include "hardware/i2c.h"
+
+
+// #define SENSOR_I2C_PORT
+// #define TOUCH_RST_PIN
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846f)
@@ -320,35 +339,12 @@ struct QMI8658_Config
 #define QMI8658_AE_SAMPLE_SIZE ((4 + 3 + 1) * sizeof(short) + sizeof(unsigned char))
 struct FisImuRawSample
 {
-    /*! \brief The sample counter of the sample. */
-    unsigned char timestamp[3];
-    /*!
-     * \brief Pointer to accelerometer data in the sample buffer.
-     *
-     * \c NULL if no accelerometer data is available in the buffer.
-     */
-    unsigned char const *accelerometerData;
-    /*!
-     * \brief Pointer to gyroscope data in the sample buffer.
-     *
-     * \c NULL if no gyroscope data is available in the buffer.
-     */
-    unsigned char const *gyroscopeData;
-    /*!
-     * \brief Pointer to magnetometer data in the sample buffer.
-     *
-     * \c NULL if no magnetometer data is available in the buffer.
-     */
-    unsigned char const *magnetometerData;
-    /*!
-     * \brief Pointer to AttitudeEngine data in the sample buffer.
-     *
-     * \c NULL if no AttitudeEngine data is available in the buffer.
-     */
-    unsigned char const *attitudeEngineData;
-    /*! \brief Raw sample buffer. */
-    unsigned char sampleBuffer[QMI8658_SAMPLE_SIZE + QMI8658_AE_SAMPLE_SIZE];
-    /*! \brief Contents of the FIS status 1 register. */
+    unsigned char timestamp[3];                                                 /*! \brief Pointer to accelerometer data in the sample buffer. */
+    unsigned char const *accelerometerData;                                     /*! \brief Pointer to gyroscope data in the sample buffer. */
+    unsigned char const *gyroscopeData;                                         /*! \brief Pointer to magnetometer data in the sample buffer. */
+    unsigned char const *magnetometerData;                                      /*! \brief Pointer to AttitudeEngine data in the sample buffer. */
+    unsigned char const *attitudeEngineData;                                    /*! \brief Raw sample buffer. */
+    unsigned char sampleBuffer[QMI8658_SAMPLE_SIZE + QMI8658_AE_SAMPLE_SIZE];   /*! \brief Contents of the FIS status 1 register. */
     unsigned char status1;
     // unsigned char status0;
     // unsigned int durT;
@@ -418,27 +414,47 @@ enum QMI8658_PedoStepSizeMode
     QMI8658_PedoStepSize_Sensitivity = 0x10 /*! \brief High sensitivity step size mode. */
 };
 
-extern unsigned char QMI8658_write_reg(unsigned char reg, unsigned char value);
-extern unsigned char QMI8658_read_reg(unsigned char reg, unsigned char *buf, unsigned short len);
-extern unsigned char QMI8658_init(struct QMI8658_Config configuration);
-extern void QMI8658_config_apply(struct QMI8658_Config const *config);
-extern void QMI8658_enable_sensors(unsigned char enableFlags);
-extern void QMI8658_read_acc_xyz(float acc_xyz[3]);
-extern void QMI8658_read_gyro_xyz(float gyro_xyz[3]);
-extern void QMI8658_read_xyz(float acc[3], float gyro[3], unsigned int *tim_count);
-extern void QMI8658_read_xyz_raw(short raw_acc_xyz[3], short raw_gyro_xyz[3], unsigned int *tim_count);
-extern void QMI8658_read_ae(float quat[4], float velocity[3]);
-extern unsigned char QMI8658_read_status0(void);
-extern unsigned char QMI8658_read_status1(void);
-extern float QMI8658_read_temp(void);
-extern void QMI8658_enable_wake_on_motion(void);
-extern void QMI8658_disable_wake_on_motion(void);
-extern void QMI8658_config_pedometer(struct QMI8658_PedoConfig const *config);
-extern void QMI8658_enable_pedometer(void);
-extern void QMI8658_disable_pedometer(void);
-extern void QMI8658_read_step_count(unsigned int *stepCount);
-extern void QMI8658_reset_step_count(void);
-extern void QMI8658_config_pedometer_interrupt(void);
-extern unsigned char QMI8658_check_pedometer_interrupt(void);
+/********************************************************************************
+ * I2C Communication Functions
+ ********************************************************************************/
+void QMI8658_I2C_Write(uint8_t address, uint8_t value);
+uint8_t QMI8658_I2C_Read(uint8_t address);
+void QMI8658_I2C_Read_Buffer(uint8_t address, uint8_t *buffer, uint32_t len);
+
+/********************************************************************************
+ * Initialization and Configuration Functions
+ ********************************************************************************/
+uint8_t QMI8658_init(struct QMI8658_Config configuration);
+void QMI8658_Config_Apply(struct QMI8658_Config const *config);
+void QMI8658_Enable_Sensors(unsigned char enable_flags);
+
+/********************************************************************************
+ * Data Reading Functions
+ ********************************************************************************/
+void QMI8658_Read_Acc_XYZ(float acc_xyz[3]);
+void QMI8658_Read_Gyro_XYZ(float gyro_xyz[3]);
+void QMI8658_Read_XYZ(float acc[3], float gyro[3], unsigned int *tim_count);
+void QMI8658_Read_XYZ_Raw(short raw_acc_xyz[3], short raw_gyro_xyz[3], unsigned int *tim_count);
+void QMI8658_Read_AE(float quat[4], float velocity[3]);
+uint8_t QMI8658_Read_Status0(void);
+uint8_t QMI8658_Read_Status1(void);
+float QMI8658_Read_Temp(void);
+
+/********************************************************************************
+ * Motion Detection Functions
+ ********************************************************************************/
+void QMI8658_Enable_Wake_On_Motion(void);
+void QMI8658_Disable_Wake_On_Motion(void);
+
+/********************************************************************************
+ * Pedometer Functions
+ ********************************************************************************/
+void QMI8658_Config_Pedometer(struct QMI8658_PedoConfig const *config);
+void QMI8658_Config_Pedometer_Interrupt(void);
+void QMI8658_Enable_Pedometer(void);
+void QMI8658_Disable_Pedometer(void);
+void QMI8658_Read_Step_Count(unsigned int *stepCount);
+void QMI8658_Reset_Step_Count(void);
+void QMI8658_Check_Pedometer_Interrupt(void);
 
 #endif
