@@ -3,8 +3,8 @@
 aux_source_directory(. DIR_PCF85063A_SRCS)
 
 # Add header file directory
-include_directories(../WaveShare)
+# include_directories(../WaveShare)
 
 # Generate link library
 add_library(PCF85063A ${DIR_PCF85063A_SRCS})
-target_link_libraries(PCF85063A PUBLIC WaveShare)
+# target_link_libraries(PCF85063A PUBLIC WaveShare)
