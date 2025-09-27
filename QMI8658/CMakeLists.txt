@@ -6,4 +6,4 @@ aux_source_directory(. DIR_QMI8658_SRCS)
 
 # Generate link library
 add_library(QMI8658 ${DIR_QMI8658_SRCS})
-target_link_libraries(QMI8658 PUBLIC pico_stdlib hardware_i2c hardware_gpio)
+target_link_libraries(QMI8658 PUBLIC pico_stdlib hardware_gpio hardware_spi hardware_pwm hardware_dma hardware_adc hardware_i2c hardware_pll hardware_clocks)

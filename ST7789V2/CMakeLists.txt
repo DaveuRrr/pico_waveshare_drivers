@@ -7,4 +7,4 @@ aux_source_directory(. DIR_ST7789V2_SRCS)
 
 # Generate link library
 add_library(ST7789V2 ${DIR_ST7789V2_SRCS})
-target_link_libraries(ST7789V2 PUBLIC pico_stdlib hardware_gpio hardware_spi hardware_pwm hardware_dma)
+target_link_libraries(ST7789V2 PUBLIC pico_stdlib hardware_gpio hardware_spi hardware_pwm hardware_dma hardware_adc hardware_i2c hardware_pll hardware_clocks)

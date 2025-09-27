@@ -7,4 +7,4 @@ aux_source_directory(. DIR_PCF85063A_SRCS)
 
 # Generate link library
 add_library(PCF85063A ${DIR_PCF85063A_SRCS})
-target_link_libraries(PCF85063A PUBLIC pico_stdlib hardware_i2c hardware_gpio)
+target_link_libraries(PCF85063A PUBLIC pico_stdlib hardware_gpio hardware_spi hardware_pwm hardware_dma hardware_adc hardware_i2c hardware_pll hardware_clocks)
