@@ -21,12 +21,12 @@ int main()
 
     // GPIO Config
     ST7789V2_GPIO(LCD_RST_PIN, 1);
-	ST7789V2_GPIO(LCD_DC_PIN, 1);
+    ST7789V2_GPIO(LCD_DC_PIN, 1);
     ST7789V2_GPIO(LCD_CS_PIN, 1);
     ST7789V2_GPIO(LCD_BL_PIN, 1);
 
     gpio_put(LCD_CS_PIN, 1);
-	gpio_put(LCD_DC_PIN, 0);
+    gpio_put(LCD_DC_PIN, 0);
     // gpio_put(LCD_BL_PIN, 1);
 
     CST816S_GPIO(TOUCH_RST_PIN, 1);

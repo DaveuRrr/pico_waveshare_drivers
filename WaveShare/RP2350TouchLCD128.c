@@ -20,14 +20,14 @@ int main()
     stdio_init_all();
 
     // GPIO Config
-	GC9A01A_GPIO(LCD_RST_PIN, 1);
-	GC9A01A_GPIO(LCD_DC_PIN, 1);
+    GC9A01A_GPIO(LCD_RST_PIN, 1);
+    GC9A01A_GPIO(LCD_DC_PIN, 1);
     GC9A01A_GPIO(LCD_CS_PIN, 1);
     GC9A01A_GPIO(LCD_BL_PIN, 1);
 
-	gpio_put(LCD_CS_PIN, 1);
-	gpio_put(LCD_DC_PIN, 0);
-	gpio_put(LCD_BL_PIN, 1);
+    gpio_put(LCD_CS_PIN, 1);
+    gpio_put(LCD_DC_PIN, 0);
+    gpio_put(LCD_BL_PIN, 1);
 
     // ADC Config
     adc_init();

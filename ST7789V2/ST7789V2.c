@@ -28,8 +28,8 @@ dma_channel_config ST7789V2_DMA_CONFIG;
 ********************************************************************************/
 static void ST7789V2_GPIO(uint16_t pin, uint16_t direction)
 {
-	gpio_init(pin);
-	gpio_set_dir(pin, direction);
+    gpio_init(pin);
+    gpio_set_dir(pin, direction);
 }
 
 /********************************************************************************
@@ -38,8 +38,8 @@ static void ST7789V2_GPIO(uint16_t pin, uint16_t direction)
 ********************************************************************************/
 void ST7789V2_SET_PWM(uint8_t value)
 {
-	if (value < 0 || value > 100) printf("WS_SET_PWM Error \r\n");
-	else pwm_set_chan_level(ST7789V2_SLICE_NUM, PWM_CHAN_B, value);
+    if (value < 0 || value > 100) printf("WS_SET_PWM Error \r\n");
+    else pwm_set_chan_level(ST7789V2_SLICE_NUM, PWM_CHAN_B, value);
 }
 
 /********************************************************************************
@@ -48,10 +48,10 @@ void ST7789V2_SET_PWM(uint8_t value)
 static void ST7789V2_Reset(void)
 {
     gpio_put(LCD_RST_PIN, 1);
-	sleep_ms(100);
-	gpio_put(LCD_RST_PIN, 0);
-	sleep_ms(100);
-	gpio_put(LCD_RST_PIN, 1);
+    sleep_ms(100);
+    gpio_put(LCD_RST_PIN, 0);
+    sleep_ms(100);
+    gpio_put(LCD_RST_PIN, 1);
     sleep_ms(100);
 }
 
@@ -63,7 +63,7 @@ static void ST7789V2_Send_Command(uint8_t command)
 {
     gpio_put(LCD_DC_PIN, 0);
     gpio_put(LCD_CS_PIN, 0);
-	spi_write_blocking(LCD_SPI_PORT, command, 1);
+    spi_write_blocking(LCD_SPI_PORT, command, 1);
     gpio_put(LCD_CS_PIN, 1);
 }
 
@@ -75,7 +75,7 @@ static void ST7789V2_Send_Data_8Bit(uint8_t data)
 {
     gpio_put(LCD_DC_PIN, 1);
     gpio_put(LCD_CS_PIN, 0);
-	spi_write_blocking(LCD_SPI_PORT, data, 1);
+    spi_write_blocking(LCD_SPI_PORT, data, 1);
     gpio_put(LCD_CS_PIN, 1);
 }
 
@@ -87,8 +87,8 @@ static void ST7789V2_Send_Data_16Bit(uint16_t data)
 {
     gpio_put(LCD_DC_PIN, 1);
     gpio_put(LCD_CS_PIN, 0);
-	spi_write_blocking(LCD_SPI_PORT, data >> 8 & 0xFF, 1);
-	spi_write_blocking(LCD_SPI_PORT, data & 0xFF, 1);
+    spi_write_blocking(LCD_SPI_PORT, data >> 8 & 0xFF, 1);
+    spi_write_blocking(LCD_SPI_PORT, data & 0xFF, 1);
     gpio_put(LCD_CS_PIN, 1);
 }
 
@@ -218,29 +218,29 @@ void ST7789V2_Init(uint8_t scan_direction)
 
     // GPIO Config
     ST7789V2_GPIO(LCD_RST_PIN, 1);
-	ST7789V2_GPIO(LCD_DC_PIN, 1);
+    ST7789V2_GPIO(LCD_DC_PIN, 1);
     ST7789V2_GPIO(LCD_CS_PIN, 1);
     ST7789V2_GPIO(LCD_BL_PIN, 1);
 
     gpio_put(LCD_CS_PIN, 1);
-	gpio_put(LCD_DC_PIN, 0);
+    gpio_put(LCD_DC_PIN, 0);
     // gpio_put(LCD_BL_PIN, 1);
 
     // PWM Configuration
-	gpio_set_function(LCD_BL_PIN, GPIO_FUNC_PWM);
-	ST7789V2_SLICE_NUM = pwm_gpio_to_slice_num(LCD_BL_PIN);
-	pwm_set_wrap(ST7789V2_SLICE_NUM, 100);
+    gpio_set_function(LCD_BL_PIN, GPIO_FUNC_PWM);
+    ST7789V2_SLICE_NUM = pwm_gpio_to_slice_num(LCD_BL_PIN);
+    pwm_set_wrap(ST7789V2_SLICE_NUM, 100);
     pwm_set_chan_level(ST7789V2_SLICE_NUM, PWM_CHAN_B, 0);
     pwm_set_clkdiv(ST7789V2_SLICE_NUM, 50);
     pwm_set_enabled(ST7789V2_SLICE_NUM, true);
 
-	// SPI Configuration
-	spi_init(LCD_SPI_PORT, 270000 * 1000);
+    // SPI Configuration
+    spi_init(LCD_SPI_PORT, 270000 * 1000);
     gpio_set_function(LCD_CLK_PIN, GPIO_FUNC_SPI);
     gpio_set_function(LCD_MOSI_PIN, GPIO_FUNC_SPI);
 
-	// DMA Configuration
-	ST7789V2_DMA_TX = dma_claim_unused_channel(true);
+    // DMA Configuration
+    ST7789V2_DMA_TX = dma_claim_unused_channel(true);
     ST7789V2_DMA_CONFIG = dma_channel_get_default_config(ST7789V2_DMA_TX);
     channel_config_set_transfer_data_size(&ST7789V2_DMA_CONFIG, DMA_SIZE_8); 
     channel_config_set_dreq(&ST7789V2_DMA_CONFIG, spi_get_dreq(LCD_SPI_PORT, true));
@@ -356,25 +356,25 @@ void ST7789V2_DisplayWindows(uint16_t x_start, uint16_t y_start, uint16_t x_end,
     uint16_t j, data;
     uint32_t address = 0;
     if(x_start > x_end) 
-	{
-		data = x_start;
-		x_start = x_end;
-		x_end = data;
-	}
-	if (y_start > y_end)
-	{
-		data = y_start;
-		y_start = y_end;
-		y_end = data;
-	}
+    {
+        data = x_start;
+        x_start = x_end;
+        x_end = data;
+    }
+    if (y_start > y_end)
+    {
+        data = y_start;
+        y_start = y_end;
+        y_end = data;
+    }
 
     x_start -= 10;x_end += 10;
-	y_start -= 10;y_end += 10;
-	x_start = (x_start < 300)? x_start : 0;
-	y_start = (y_start < 300)? y_start : 0;
+    y_start -= 10;y_end += 10;
+    x_start = (x_start < 300)? x_start : 0;
+    y_start = (y_start < 300)? y_start : 0;
 
     x_end = (x_end < 240)? x_end : 240;
-	y_end = (y_end < 280)? y_end : 280;
+    y_end = (y_end < 280)? y_end : 280;
 
     ST7789V2_Set_Windows(x_start, y_start, x_end, y_end);
     gpio_put(LCD_DC_PIN, 1);

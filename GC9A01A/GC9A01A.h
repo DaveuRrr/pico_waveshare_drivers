@@ -63,9 +63,9 @@ extern dma_channel_config GC9A01A_DMA_CONFIG;
 #define LBBLUE        0X2B12
 
 typedef struct{
-	uint16_t WIDTH;
-	uint16_t HEIGHT;
-	uint8_t SCAN_DIR;
+    uint16_t WIDTH;
+    uint16_t HEIGHT;
+    uint8_t SCAN_DIR;
 }GC9A01A_ATTRIBUTES;
 extern GC9A01A_ATTRIBUTES GC9A01A;
 

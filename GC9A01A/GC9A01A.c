@@ -25,8 +25,8 @@ dma_channel_config GC9A01A_DMA_CONFIG;
 ********************************************************************************/
 static void GC9A01A_GPIO(uint16_t pin, uint16_t direction)
 {
-	gpio_init(pin);
-	gpio_set_dir(pin, direction);
+    gpio_init(pin);
+    gpio_set_dir(pin, direction);
 }
 
 /********************************************************************************
@@ -35,8 +35,8 @@ static void GC9A01A_GPIO(uint16_t pin, uint16_t direction)
 ********************************************************************************/
 void GC9A01A_SET_PWM(uint8_t value)
 {
-	if (value < 0 || value > 100) printf("WS_SET_PWM Error \r\n");
-	else pwm_set_chan_level(GC9A01A_SLICE_NUM, PWM_CHAN_B, value);
+    if (value < 0 || value > 100) printf("WS_SET_PWM Error \r\n");
+    else pwm_set_chan_level(GC9A01A_SLICE_NUM, PWM_CHAN_B, value);
 }
 
 /********************************************************************************
@@ -44,13 +44,13 @@ void GC9A01A_SET_PWM(uint8_t value)
 ********************************************************************************/
 static void GC9A01A_Reset(void)
 {
-	gpio_put(LCD_RST_PIN, 1);
-	sleep_ms(100);
-	gpio_put(LCD_RST_PIN, 0);
-	sleep_ms(100);
-	gpio_put(LCD_RST_PIN, 1);
-	gpio_put(LCD_CS_PIN, 0);
-	sleep_ms(100);
+    gpio_put(LCD_RST_PIN, 1);
+    sleep_ms(100);
+    gpio_put(LCD_RST_PIN, 0);
+    sleep_ms(100);
+    gpio_put(LCD_RST_PIN, 1);
+    gpio_put(LCD_CS_PIN, 0);
+    sleep_ms(100);
 }
 
 /********************************************************************************
@@ -59,8 +59,8 @@ static void GC9A01A_Reset(void)
 ********************************************************************************/
 static void GC9A01A_Send_Command(uint8_t command)
 {
-	gpio_put(LCD_DC_PIN, 0);
-	spi_write_blocking(LCD_SPI_PORT, command, 1);
+    gpio_put(LCD_DC_PIN, 0);
+    spi_write_blocking(LCD_SPI_PORT, command, 1);
 }
 
 /********************************************************************************
@@ -69,8 +69,8 @@ static void GC9A01A_Send_Command(uint8_t command)
 ********************************************************************************/
 static void GC9A01A_Send_Data_8Bit(uint8_t data)
 {
-	gpio_put(LCD_DC_PIN, 1);
-	spi_write_blocking(LCD_SPI_PORT, data, 1);
+    gpio_put(LCD_DC_PIN, 1);
+    spi_write_blocking(LCD_SPI_PORT, data, 1);
 }
 
 /********************************************************************************
@@ -79,9 +79,9 @@ static void GC9A01A_Send_Data_8Bit(uint8_t data)
 ********************************************************************************/
 static void GC9A01A_Send_Data_16Bit(uint16_t data)
 {
-	gpio_put(LCD_DC_PIN, 1);
-	spi_write_blocking(LCD_SPI_PORT, data >> 8, 1);
-	spi_write_blocking(LCD_SPI_PORT, data, 1);	
+    gpio_put(LCD_DC_PIN, 1);
+    spi_write_blocking(LCD_SPI_PORT, data >> 8, 1);
+    spi_write_blocking(LCD_SPI_PORT, data, 1);	
 }
 
 /********************************************************************************
@@ -90,239 +90,239 @@ static void GC9A01A_Send_Data_16Bit(uint16_t data)
 static void GC9A01A_Init_Registers(void)
 {
     GC9A01A_Send_Command(0xEF);
-	GC9A01A_Send_Command(0xEB);
-	GC9A01A_Send_Data_8Bit(0x14); 
-	
+    GC9A01A_Send_Command(0xEB);
+    GC9A01A_Send_Data_8Bit(0x14); 
+
     GC9A01A_Send_Command(0xFE);			 
-	GC9A01A_Send_Command(0xEF); 
+    GC9A01A_Send_Command(0xEF); 
 
-	GC9A01A_Send_Command(0xEB);	
-	GC9A01A_Send_Data_8Bit(0x14); 
+    GC9A01A_Send_Command(0xEB);	
+    GC9A01A_Send_Data_8Bit(0x14); 
 
-	GC9A01A_Send_Command(0x84);			
-	GC9A01A_Send_Data_8Bit(0x40); 
+    GC9A01A_Send_Command(0x84);			
+    GC9A01A_Send_Data_8Bit(0x40); 
 
-	GC9A01A_Send_Command(0x85);			
-	GC9A01A_Send_Data_8Bit(0xFF); 
+    GC9A01A_Send_Command(0x85);			
+    GC9A01A_Send_Data_8Bit(0xFF); 
 
-	GC9A01A_Send_Command(0x86);			
-	GC9A01A_Send_Data_8Bit(0xFF); 
+    GC9A01A_Send_Command(0x86);			
+    GC9A01A_Send_Data_8Bit(0xFF); 
 
-	GC9A01A_Send_Command(0x87);			
-	GC9A01A_Send_Data_8Bit(0xFF);
+    GC9A01A_Send_Command(0x87);			
+    GC9A01A_Send_Data_8Bit(0xFF);
 
-	GC9A01A_Send_Command(0x88);			
-	GC9A01A_Send_Data_8Bit(0x0A);
+    GC9A01A_Send_Command(0x88);			
+    GC9A01A_Send_Data_8Bit(0x0A);
 
-	GC9A01A_Send_Command(0x89);			
-	GC9A01A_Send_Data_8Bit(0x21); 
+    GC9A01A_Send_Command(0x89);			
+    GC9A01A_Send_Data_8Bit(0x21); 
 
-	GC9A01A_Send_Command(0x8A);			
-	GC9A01A_Send_Data_8Bit(0x00); 
+    GC9A01A_Send_Command(0x8A);			
+    GC9A01A_Send_Data_8Bit(0x00); 
 
-	GC9A01A_Send_Command(0x8B);			
-	GC9A01A_Send_Data_8Bit(0x80); 
+    GC9A01A_Send_Command(0x8B);			
+    GC9A01A_Send_Data_8Bit(0x80); 
 
-	GC9A01A_Send_Command(0x8C);			
-	GC9A01A_Send_Data_8Bit(0x01); 
+    GC9A01A_Send_Command(0x8C);			
+    GC9A01A_Send_Data_8Bit(0x01); 
 
-	GC9A01A_Send_Command(0x8D);			
-	GC9A01A_Send_Data_8Bit(0x01); 
+    GC9A01A_Send_Command(0x8D);			
+    GC9A01A_Send_Data_8Bit(0x01); 
 
-	GC9A01A_Send_Command(0x8E);			
-	GC9A01A_Send_Data_8Bit(0xFF); 
+    GC9A01A_Send_Command(0x8E);			
+    GC9A01A_Send_Data_8Bit(0xFF); 
 
-	GC9A01A_Send_Command(0x8F);			
-	GC9A01A_Send_Data_8Bit(0xFF); 
-
-
-	GC9A01A_Send_Command(0xB6);
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0x20);
-
-	GC9A01A_Send_Command(0x36);
-	GC9A01A_Send_Data_8Bit(0x08);//Set as vertical screen
-
-	GC9A01A_Send_Command(0x3A);			
-	GC9A01A_Send_Data_8Bit(0x05); 
+    GC9A01A_Send_Command(0x8F);			
+    GC9A01A_Send_Data_8Bit(0xFF); 
 
 
-	GC9A01A_Send_Command(0x90);			
-	GC9A01A_Send_Data_8Bit(0x08);
-	GC9A01A_Send_Data_8Bit(0x08);
-	GC9A01A_Send_Data_8Bit(0x08);
-	GC9A01A_Send_Data_8Bit(0x08); 
+    GC9A01A_Send_Command(0xB6);
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0x20);
 
-	GC9A01A_Send_Command(0xBD);			
-	GC9A01A_Send_Data_8Bit(0x06);
-	
-	GC9A01A_Send_Command(0xBC);			
-	GC9A01A_Send_Data_8Bit(0x00);	
+    GC9A01A_Send_Command(0x36);
+    GC9A01A_Send_Data_8Bit(0x08);//Set as vertical screen
 
-	GC9A01A_Send_Command(0xFF);			
-	GC9A01A_Send_Data_8Bit(0x60);
-	GC9A01A_Send_Data_8Bit(0x01);
-	GC9A01A_Send_Data_8Bit(0x04);
-
-	GC9A01A_Send_Command(0xC3);			
-	GC9A01A_Send_Data_8Bit(0x13);
-	GC9A01A_Send_Command(0xC4);			
-	GC9A01A_Send_Data_8Bit(0x13);
-
-	GC9A01A_Send_Command(0xC9);			
-	GC9A01A_Send_Data_8Bit(0x22);
-
-	GC9A01A_Send_Command(0xBE);			
-	GC9A01A_Send_Data_8Bit(0x11); 
-
-	GC9A01A_Send_Command(0xE1);			
-	GC9A01A_Send_Data_8Bit(0x10);
-	GC9A01A_Send_Data_8Bit(0x0E);
-
-	GC9A01A_Send_Command(0xDF);			
-	GC9A01A_Send_Data_8Bit(0x21);
-	GC9A01A_Send_Data_8Bit(0x0c);
-	GC9A01A_Send_Data_8Bit(0x02);
-
-	GC9A01A_Send_Command(0xF0);   
-	GC9A01A_Send_Data_8Bit(0x45);
-	GC9A01A_Send_Data_8Bit(0x09);
-	GC9A01A_Send_Data_8Bit(0x08);
-	GC9A01A_Send_Data_8Bit(0x08);
-	GC9A01A_Send_Data_8Bit(0x26);
- 	GC9A01A_Send_Data_8Bit(0x2A);
-
- 	GC9A01A_Send_Command(0xF1);    
- 	GC9A01A_Send_Data_8Bit(0x43);
- 	GC9A01A_Send_Data_8Bit(0x70);
- 	GC9A01A_Send_Data_8Bit(0x72);
- 	GC9A01A_Send_Data_8Bit(0x36);
- 	GC9A01A_Send_Data_8Bit(0x37);  
- 	GC9A01A_Send_Data_8Bit(0x6F);
+    GC9A01A_Send_Command(0x3A);			
+    GC9A01A_Send_Data_8Bit(0x05); 
 
 
- 	GC9A01A_Send_Command(0xF2);   
- 	GC9A01A_Send_Data_8Bit(0x45);
- 	GC9A01A_Send_Data_8Bit(0x09);
- 	GC9A01A_Send_Data_8Bit(0x08);
- 	GC9A01A_Send_Data_8Bit(0x08);
- 	GC9A01A_Send_Data_8Bit(0x26);
- 	GC9A01A_Send_Data_8Bit(0x2A);
+    GC9A01A_Send_Command(0x90);			
+    GC9A01A_Send_Data_8Bit(0x08);
+    GC9A01A_Send_Data_8Bit(0x08);
+    GC9A01A_Send_Data_8Bit(0x08);
+    GC9A01A_Send_Data_8Bit(0x08); 
 
- 	GC9A01A_Send_Command(0xF3);   
- 	GC9A01A_Send_Data_8Bit(0x43);
- 	GC9A01A_Send_Data_8Bit(0x70);
- 	GC9A01A_Send_Data_8Bit(0x72);
- 	GC9A01A_Send_Data_8Bit(0x36);
- 	GC9A01A_Send_Data_8Bit(0x37); 
- 	GC9A01A_Send_Data_8Bit(0x6F);
+    GC9A01A_Send_Command(0xBD);			
+    GC9A01A_Send_Data_8Bit(0x06);
 
-	GC9A01A_Send_Command(0xED);	
-	GC9A01A_Send_Data_8Bit(0x1B); 
-	GC9A01A_Send_Data_8Bit(0x0B); 
+    GC9A01A_Send_Command(0xBC);			
+    GC9A01A_Send_Data_8Bit(0x00);	
 
-	GC9A01A_Send_Command(0xAE);			
-	GC9A01A_Send_Data_8Bit(0x77);
-	
-	GC9A01A_Send_Command(0xCD);			
-	GC9A01A_Send_Data_8Bit(0x63);		
+    GC9A01A_Send_Command(0xFF);			
+    GC9A01A_Send_Data_8Bit(0x60);
+    GC9A01A_Send_Data_8Bit(0x01);
+    GC9A01A_Send_Data_8Bit(0x04);
+
+    GC9A01A_Send_Command(0xC3);			
+    GC9A01A_Send_Data_8Bit(0x13);
+    GC9A01A_Send_Command(0xC4);			
+    GC9A01A_Send_Data_8Bit(0x13);
+
+    GC9A01A_Send_Command(0xC9);			
+    GC9A01A_Send_Data_8Bit(0x22);
+
+    GC9A01A_Send_Command(0xBE);			
+    GC9A01A_Send_Data_8Bit(0x11); 
+
+    GC9A01A_Send_Command(0xE1);			
+    GC9A01A_Send_Data_8Bit(0x10);
+    GC9A01A_Send_Data_8Bit(0x0E);
+
+    GC9A01A_Send_Command(0xDF);			
+    GC9A01A_Send_Data_8Bit(0x21);
+    GC9A01A_Send_Data_8Bit(0x0c);
+    GC9A01A_Send_Data_8Bit(0x02);
+
+    GC9A01A_Send_Command(0xF0);   
+    GC9A01A_Send_Data_8Bit(0x45);
+    GC9A01A_Send_Data_8Bit(0x09);
+    GC9A01A_Send_Data_8Bit(0x08);
+    GC9A01A_Send_Data_8Bit(0x08);
+    GC9A01A_Send_Data_8Bit(0x26);
+    GC9A01A_Send_Data_8Bit(0x2A);
+
+    GC9A01A_Send_Command(0xF1);    
+    GC9A01A_Send_Data_8Bit(0x43);
+    GC9A01A_Send_Data_8Bit(0x70);
+    GC9A01A_Send_Data_8Bit(0x72);
+    GC9A01A_Send_Data_8Bit(0x36);
+    GC9A01A_Send_Data_8Bit(0x37);  
+    GC9A01A_Send_Data_8Bit(0x6F);
 
 
-	GC9A01A_Send_Command(0x70);			
-	GC9A01A_Send_Data_8Bit(0x07);
-	GC9A01A_Send_Data_8Bit(0x07);
-	GC9A01A_Send_Data_8Bit(0x04);
-	GC9A01A_Send_Data_8Bit(0x0E); 
-	GC9A01A_Send_Data_8Bit(0x0F); 
-	GC9A01A_Send_Data_8Bit(0x09);
-	GC9A01A_Send_Data_8Bit(0x07);
-	GC9A01A_Send_Data_8Bit(0x08);
-	GC9A01A_Send_Data_8Bit(0x03);
+    GC9A01A_Send_Command(0xF2);   
+    GC9A01A_Send_Data_8Bit(0x45);
+    GC9A01A_Send_Data_8Bit(0x09);
+    GC9A01A_Send_Data_8Bit(0x08);
+    GC9A01A_Send_Data_8Bit(0x08);
+    GC9A01A_Send_Data_8Bit(0x26);
+    GC9A01A_Send_Data_8Bit(0x2A);
 
-	GC9A01A_Send_Command(0xE8);			
-	GC9A01A_Send_Data_8Bit(0x34);
+    GC9A01A_Send_Command(0xF3);   
+    GC9A01A_Send_Data_8Bit(0x43);
+    GC9A01A_Send_Data_8Bit(0x70);
+    GC9A01A_Send_Data_8Bit(0x72);
+    GC9A01A_Send_Data_8Bit(0x36);
+    GC9A01A_Send_Data_8Bit(0x37); 
+    GC9A01A_Send_Data_8Bit(0x6F);
 
-	GC9A01A_Send_Command(0x62);			
-	GC9A01A_Send_Data_8Bit(0x18);
-	GC9A01A_Send_Data_8Bit(0x0D);
-	GC9A01A_Send_Data_8Bit(0x71);
-	GC9A01A_Send_Data_8Bit(0xED);
-	GC9A01A_Send_Data_8Bit(0x70); 
-	GC9A01A_Send_Data_8Bit(0x70);
-	GC9A01A_Send_Data_8Bit(0x18);
-	GC9A01A_Send_Data_8Bit(0x0F);
-	GC9A01A_Send_Data_8Bit(0x71);
-	GC9A01A_Send_Data_8Bit(0xEF);
-	GC9A01A_Send_Data_8Bit(0x70); 
-	GC9A01A_Send_Data_8Bit(0x70);
+    GC9A01A_Send_Command(0xED);	
+    GC9A01A_Send_Data_8Bit(0x1B); 
+    GC9A01A_Send_Data_8Bit(0x0B); 
 
-	GC9A01A_Send_Command(0x63);			
-	GC9A01A_Send_Data_8Bit(0x18);
-	GC9A01A_Send_Data_8Bit(0x11);
-	GC9A01A_Send_Data_8Bit(0x71);
-	GC9A01A_Send_Data_8Bit(0xF1);
-	GC9A01A_Send_Data_8Bit(0x70); 
-	GC9A01A_Send_Data_8Bit(0x70);
-	GC9A01A_Send_Data_8Bit(0x18);
-	GC9A01A_Send_Data_8Bit(0x13);
-	GC9A01A_Send_Data_8Bit(0x71);
-	GC9A01A_Send_Data_8Bit(0xF3);
-	GC9A01A_Send_Data_8Bit(0x70); 
-	GC9A01A_Send_Data_8Bit(0x70);
+    GC9A01A_Send_Command(0xAE);			
+    GC9A01A_Send_Data_8Bit(0x77);
 
-	GC9A01A_Send_Command(0x64);			
-	GC9A01A_Send_Data_8Bit(0x28);
-	GC9A01A_Send_Data_8Bit(0x29);
-	GC9A01A_Send_Data_8Bit(0xF1);
-	GC9A01A_Send_Data_8Bit(0x01);
-	GC9A01A_Send_Data_8Bit(0xF1);
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0x07);
+    GC9A01A_Send_Command(0xCD);			
+    GC9A01A_Send_Data_8Bit(0x63);		
 
-	GC9A01A_Send_Command(0x66);			
-	GC9A01A_Send_Data_8Bit(0x3C);
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0xCD);
-	GC9A01A_Send_Data_8Bit(0x67);
-	GC9A01A_Send_Data_8Bit(0x45);
-	GC9A01A_Send_Data_8Bit(0x45);
-	GC9A01A_Send_Data_8Bit(0x10);
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0x00);
 
-	GC9A01A_Send_Command(0x67);			
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0x3C);
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0x00);
-	GC9A01A_Send_Data_8Bit(0x01);
-	GC9A01A_Send_Data_8Bit(0x54);
-	GC9A01A_Send_Data_8Bit(0x10);
-	GC9A01A_Send_Data_8Bit(0x32);
-	GC9A01A_Send_Data_8Bit(0x98);
+    GC9A01A_Send_Command(0x70);			
+    GC9A01A_Send_Data_8Bit(0x07);
+    GC9A01A_Send_Data_8Bit(0x07);
+    GC9A01A_Send_Data_8Bit(0x04);
+    GC9A01A_Send_Data_8Bit(0x0E); 
+    GC9A01A_Send_Data_8Bit(0x0F); 
+    GC9A01A_Send_Data_8Bit(0x09);
+    GC9A01A_Send_Data_8Bit(0x07);
+    GC9A01A_Send_Data_8Bit(0x08);
+    GC9A01A_Send_Data_8Bit(0x03);
 
-	GC9A01A_Send_Command(0x74);			
-	GC9A01A_Send_Data_8Bit(0x10);	
-	GC9A01A_Send_Data_8Bit(0x85);	
-	GC9A01A_Send_Data_8Bit(0x80);
-	GC9A01A_Send_Data_8Bit(0x00); 
-	GC9A01A_Send_Data_8Bit(0x00); 
-	GC9A01A_Send_Data_8Bit(0x4E);
-	GC9A01A_Send_Data_8Bit(0x00);					
-	
+    GC9A01A_Send_Command(0xE8);			
+    GC9A01A_Send_Data_8Bit(0x34);
+
+    GC9A01A_Send_Command(0x62);			
+    GC9A01A_Send_Data_8Bit(0x18);
+    GC9A01A_Send_Data_8Bit(0x0D);
+    GC9A01A_Send_Data_8Bit(0x71);
+    GC9A01A_Send_Data_8Bit(0xED);
+    GC9A01A_Send_Data_8Bit(0x70); 
+    GC9A01A_Send_Data_8Bit(0x70);
+    GC9A01A_Send_Data_8Bit(0x18);
+    GC9A01A_Send_Data_8Bit(0x0F);
+    GC9A01A_Send_Data_8Bit(0x71);
+    GC9A01A_Send_Data_8Bit(0xEF);
+    GC9A01A_Send_Data_8Bit(0x70); 
+    GC9A01A_Send_Data_8Bit(0x70);
+
+    GC9A01A_Send_Command(0x63);			
+    GC9A01A_Send_Data_8Bit(0x18);
+    GC9A01A_Send_Data_8Bit(0x11);
+    GC9A01A_Send_Data_8Bit(0x71);
+    GC9A01A_Send_Data_8Bit(0xF1);
+    GC9A01A_Send_Data_8Bit(0x70); 
+    GC9A01A_Send_Data_8Bit(0x70);
+    GC9A01A_Send_Data_8Bit(0x18);
+    GC9A01A_Send_Data_8Bit(0x13);
+    GC9A01A_Send_Data_8Bit(0x71);
+    GC9A01A_Send_Data_8Bit(0xF3);
+    GC9A01A_Send_Data_8Bit(0x70); 
+    GC9A01A_Send_Data_8Bit(0x70);
+
+    GC9A01A_Send_Command(0x64);			
+    GC9A01A_Send_Data_8Bit(0x28);
+    GC9A01A_Send_Data_8Bit(0x29);
+    GC9A01A_Send_Data_8Bit(0xF1);
+    GC9A01A_Send_Data_8Bit(0x01);
+    GC9A01A_Send_Data_8Bit(0xF1);
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0x07);
+
+    GC9A01A_Send_Command(0x66);			
+    GC9A01A_Send_Data_8Bit(0x3C);
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0xCD);
+    GC9A01A_Send_Data_8Bit(0x67);
+    GC9A01A_Send_Data_8Bit(0x45);
+    GC9A01A_Send_Data_8Bit(0x45);
+    GC9A01A_Send_Data_8Bit(0x10);
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0x00);
+
+    GC9A01A_Send_Command(0x67);			
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0x3C);
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0x00);
+    GC9A01A_Send_Data_8Bit(0x01);
+    GC9A01A_Send_Data_8Bit(0x54);
+    GC9A01A_Send_Data_8Bit(0x10);
+    GC9A01A_Send_Data_8Bit(0x32);
+    GC9A01A_Send_Data_8Bit(0x98);
+
+    GC9A01A_Send_Command(0x74);			
+    GC9A01A_Send_Data_8Bit(0x10);	
+    GC9A01A_Send_Data_8Bit(0x85);	
+    GC9A01A_Send_Data_8Bit(0x80);
+    GC9A01A_Send_Data_8Bit(0x00); 
+    GC9A01A_Send_Data_8Bit(0x00); 
+    GC9A01A_Send_Data_8Bit(0x4E);
+    GC9A01A_Send_Data_8Bit(0x00);					
+
     GC9A01A_Send_Command(0x98);			
-	GC9A01A_Send_Data_8Bit(0x3e);
-	GC9A01A_Send_Data_8Bit(0x07);
+    GC9A01A_Send_Data_8Bit(0x3e);
+    GC9A01A_Send_Data_8Bit(0x07);
 
-	GC9A01A_Send_Command(0x35);	
-	GC9A01A_Send_Command(0x21);
+    GC9A01A_Send_Command(0x35);	
+    GC9A01A_Send_Command(0x21);
 
-	GC9A01A_Send_Command(0x11);
-	sleep_ms(120);
-	GC9A01A_Send_Command(0x29);
-	sleep_ms(20);
+    GC9A01A_Send_Command(0x11);
+    sleep_ms(120);
+    GC9A01A_Send_Command(0x29);
+    sleep_ms(20);
 }
 
 /********************************************************************************
@@ -337,12 +337,12 @@ static void GC9A01A_Set_Attributes(uint8_t scan_direction)
 
     //Get GRAM and LCD width and height
     if(Scan_dir == HORIZONTAL) 
-	{
+    {
         GC9A01A.HEIGHT	= GC9A01A_HEIGHT;
         GC9A01A.WIDTH   = GC9A01A_WIDTH;
         MemoryAccessReg = 0Xc8;
     } else 
-	{
+    {
         GC9A01A.HEIGHT	= GC9A01A_WIDTH;
         GC9A01A.WIDTH   = GC9A01A_HEIGHT;
         MemoryAccessReg = 0X68;
@@ -351,7 +351,7 @@ static void GC9A01A_Set_Attributes(uint8_t scan_direction)
     // Set the read / write scan direction of the frame memory
     GC9A01A_Send_Command(0x36); //MX, MY, RGB mode
     //GC9A01A_Send_Data_8Bit(MemoryAccessReg);	//0x08 set RGB
-	GC9A01A_Send_Data_8Bit(MemoryAccessReg);	//0x08 set RGB
+    GC9A01A_Send_Data_8Bit(MemoryAccessReg);	//0x08 set RGB
 }
 
 /********************************************************************************
@@ -360,31 +360,31 @@ static void GC9A01A_Set_Attributes(uint8_t scan_direction)
 ********************************************************************************/
 void GC9A01A_Init(uint8_t scan_direction)
 {
-	// GPIO Initialize
-	GC9A01A_GPIO(LCD_RST_PIN, 1);
-	GC9A01A_GPIO(LCD_DC_PIN, 1);
+    // GPIO Initialize
+    GC9A01A_GPIO(LCD_RST_PIN, 1);
+    GC9A01A_GPIO(LCD_DC_PIN, 1);
     GC9A01A_GPIO(LCD_CS_PIN, 1);
     GC9A01A_GPIO(LCD_BL_PIN, 1);
 
-	gpio_put(LCD_CS_PIN, 1);
-	gpio_put(LCD_DC_PIN, 0);
-	gpio_put(LCD_BL_PIN, 1);
+    gpio_put(LCD_CS_PIN, 1);
+    gpio_put(LCD_DC_PIN, 0);
+    gpio_put(LCD_BL_PIN, 1);
 
-	// PWM Configuration
-	gpio_set_function(LCD_BL_PIN, GPIO_FUNC_PWM);
-	GC9A01A_SLICE_NUM = pwm_gpio_to_slice_num(LCD_BL_PIN);
-	pwm_set_wrap(GC9A01A_SLICE_NUM, 100);
+    // PWM Configuration
+    gpio_set_function(LCD_BL_PIN, GPIO_FUNC_PWM);
+    GC9A01A_SLICE_NUM = pwm_gpio_to_slice_num(LCD_BL_PIN);
+    pwm_set_wrap(GC9A01A_SLICE_NUM, 100);
     pwm_set_chan_level(GC9A01A_SLICE_NUM, PWM_CHAN_B, 0);
     pwm_set_clkdiv(GC9A01A_SLICE_NUM, 50);
     pwm_set_enabled(GC9A01A_SLICE_NUM, true);
 
-	// SPI Configuration
-	spi_init(LCD_SPI_PORT, 270000 * 1000);
+    // SPI Configuration
+    spi_init(LCD_SPI_PORT, 270000 * 1000);
     gpio_set_function(LCD_CLK_PIN, GPIO_FUNC_SPI);
     gpio_set_function(LCD_MOSI_PIN, GPIO_FUNC_SPI);
 
-	// DMA Configuration
-	GC9A01A_DMA_TX = dma_claim_unused_channel(true);
+    // DMA Configuration
+    GC9A01A_DMA_TX = dma_claim_unused_channel(true);
     GC9A01A_DMA_CONFIG = dma_channel_get_default_config(GC9A01A_DMA_TX);
     channel_config_set_transfer_data_size(&GC9A01A_DMA_CONFIG, DMA_SIZE_8); 
     channel_config_set_dreq(&GC9A01A_DMA_CONFIG, spi_get_dreq(LCD_SPI_PORT, true));
@@ -394,7 +394,7 @@ void GC9A01A_Init(uint8_t scan_direction)
 
     // Set the resolution and scanning method of the screen
     GC9A01A_Set_Attributes(scan_direction);
-    
+
     // Set the initialization register
     GC9A01A_Init_Registers();
 }
@@ -423,7 +423,7 @@ void GC9A01A_Set_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uin
     GC9A01A_Send_Data_8Bit(y_end);
 
     GC9A01A_Send_Command(0X2C);
-	gpio_put(LCD_DC_PIN, 1);
+    gpio_put(LCD_DC_PIN, 1);
 }
 
 /********************************************************************************
@@ -434,19 +434,19 @@ void GC9A01A_Clear(uint16_t color)
 {
     uint16_t j;
     uint16_t image[GC9A01A_WIDTH*GC9A01A_HEIGHT];
-    
+
     color = ((color<<8)&0xff00)|(color>>8);
-   
+
     for (j = 0; j < GC9A01A_HEIGHT*GC9A01A_WIDTH; j++) 
-	{
+    {
         image[j] = color;
     }
-    
+
     GC9A01A_Set_Windows(0, 0, GC9A01A_WIDTH, GC9A01A_HEIGHT);
     gpio_put(LCD_DC_PIN, 1);
     for(j = 0; j < GC9A01A_HEIGHT; j++)
-	{
-		spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[j*GC9A01A_WIDTH], GC9A01A_WIDTH*2);
+    {
+        spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[j*GC9A01A_WIDTH], GC9A01A_WIDTH*2);
     }
 }
 
@@ -460,7 +460,7 @@ void GC9A01A_Display(uint16_t *image)
     GC9A01A_Set_Windows(0, 0, GC9A01A_WIDTH, GC9A01A_HEIGHT);
     gpio_put(LCD_DC_PIN, 1);
     for (j = 0; j < GC9A01A_HEIGHT; j++) 
-	{
+    {
         spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[j*GC9A01A_WIDTH], GC9A01A_WIDTH*2);
     }
 }
@@ -481,9 +481,9 @@ void GC9A01A_Display_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end,
     GC9A01A_Set_Windows(x_start, y_start, x_end , y_end);
     gpio_put(LCD_DC_PIN, 1);
     for (j = y_start; j < y_end; j++) 
-	{
+    {
         address = x_start + j * GC9A01A_WIDTH ;
-		spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[address], (x_end-x_start)*2);
+        spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[address], (x_end-x_start)*2);
     }
 }
 
