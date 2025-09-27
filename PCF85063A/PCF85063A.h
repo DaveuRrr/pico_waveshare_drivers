@@ -14,16 +14,16 @@
 #define INC_PCF85063A_H_
 
 #include <stdint.h>
-#include <stdlib.h> //itoa()
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "pico/time.h"
 
-// #define SENSOR_I2C_PORT (i2c1)
-// #define RTC_I2C_PORT    (i2c1)
-// #define SENSOR_SDA_PIN  (6)
-// #define SENSOR_SCL_PIN  (7)
-// #define RTC_INT_PIN     (18)
+#define SENSOR_I2C_PORT (i2c1)
+#define RTC_I2C_PORT    (i2c1)
+#define SENSOR_SDA_PIN  (6)
+#define SENSOR_SCL_PIN  (7)
+#define RTC_INT_PIN     (18)
 
 //PCF85063A_ADDRESS
 #define PCF85063A_ADDRESS   (0x51)

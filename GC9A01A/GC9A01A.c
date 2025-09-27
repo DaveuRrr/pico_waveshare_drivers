@@ -60,7 +60,7 @@ static void GC9A01A_Reset(void)
 static void GC9A01A_Send_Command(uint8_t command)
 {
     gpio_put(LCD_DC_PIN, 0);
-    spi_write_blocking(LCD_SPI_PORT, command, 1);
+    spi_write_blocking(LCD_SPI_PORT, &command, 1);
 }
 
 /********************************************************************************
@@ -70,7 +70,7 @@ static void GC9A01A_Send_Command(uint8_t command)
 static void GC9A01A_Send_Data_8Bit(uint8_t data)
 {
     gpio_put(LCD_DC_PIN, 1);
-    spi_write_blocking(LCD_SPI_PORT, data, 1);
+    spi_write_blocking(LCD_SPI_PORT, &data, 1);
 }
 
 /********************************************************************************
@@ -80,8 +80,10 @@ static void GC9A01A_Send_Data_8Bit(uint8_t data)
 static void GC9A01A_Send_Data_16Bit(uint16_t data)
 {
     gpio_put(LCD_DC_PIN, 1);
-    spi_write_blocking(LCD_SPI_PORT, data >> 8, 1);
-    spi_write_blocking(LCD_SPI_PORT, data, 1);	
+    uint8_t high_byte = data >> 8;
+    uint8_t low_byte = data & 0xFF;
+    spi_write_blocking(LCD_SPI_PORT, &high_byte, 1);
+    spi_write_blocking(LCD_SPI_PORT, &low_byte, 1);	
 }
 
 /********************************************************************************
@@ -336,7 +338,7 @@ static void GC9A01A_Set_Attributes(uint8_t scan_direction)
     uint8_t MemoryAccessReg = 0x08;
 
     //Get GRAM and LCD width and height
-    if(Scan_dir == HORIZONTAL) 
+    if(scan_direction == HORIZONTAL) 
     {
         GC9A01A.HEIGHT	= GC9A01A_HEIGHT;
         GC9A01A.WIDTH   = GC9A01A_WIDTH;

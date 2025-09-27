@@ -6,4 +6,4 @@ aux_source_directory(. DIR_GC9A01A_SRCS)
 
 # Generate link library
 add_library(GC9A01A ${DIR_GC9A01A_SRCS})
-target_link_libraries(GC9A01A PUBLIC pico_stdlib hardware_gpio hardware_spi)
+target_link_libraries(GC9A01A PUBLIC pico_stdlib hardware_gpio hardware_spi hardware_pwm hardware_dma)

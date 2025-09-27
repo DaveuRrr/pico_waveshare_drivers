@@ -13,11 +13,12 @@
 #ifndef __ST7789V2_H
 #define __ST7789V2_H   
     
-#include "DEV_Config.h"
 #include <stdint.h>
 
-#include <stdlib.h>     //itoa()
+#include <stdlib.h>
 #include <stdio.h>
+
+#include "pico/time.h"
 
 // #define LCD_SPI_PORT
 // #define LCD_RST_PIN

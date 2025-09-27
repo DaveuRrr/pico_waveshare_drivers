@@ -20,10 +20,13 @@
 
 #include "hardware/gpio.h"
 #include "hardware/i2c.h"
+#include "pico/time.h"
 
-
-// #define SENSOR_I2C_PORT
-// #define TOUCH_RST_PIN
+#define SENSOR_I2C_PORT (i2c1)
+#define SENSOR_SDA_PIN  (6)
+#define SENSOR_SCL_PIN  (7)
+#define DOF_INT1        (23)
+#define DOF_INT2        (24)
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846f)

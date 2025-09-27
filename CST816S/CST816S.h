@@ -20,12 +20,13 @@
 
 #include "hardware/gpio.h"
 #include "hardware/i2c.h"
+#include "pico/time.h"
 
-// #define SENSOR_I2C_PORT 	(i2c1)
-// #define SENSOR_SDA_PIN  	(6)
-// #define SENSOR_SCL_PIN  	(7)
-// #define TOUCH_INT_PIN   (21)
-// #define TOUCH_RST_PIN   (22)
+#define SENSOR_I2C_PORT (i2c1)
+#define SENSOR_SDA_PIN  (6)
+#define SENSOR_SCL_PIN  (7)
+#define TOUCH_INT_PIN   (21)
+#define TOUCH_RST_PIN   (22)
 
 #define CST816_ADDR (0x15)
 

@@ -20,16 +20,17 @@
 
 #include "hardware/gpio.h"
 #include "hardware/spi.h"
+#include "pico/time.h"
 
 // PINs used in GC9A01A
-// #define LCD_SPI_PORT    (spi1)
-// #define LCD_DC_PIN      (8)
-// #define LCD_CS_PIN      (9)
-// #define LCD_CLK_PIN     (10)
-// #define LCD_MOSI_PIN    (11)
-// #define LCD_MISO_PIN    (12)
-// #define LCD_RST_PIN     (13)
-// #define LCD_BL_PIN      (25)
+#define LCD_SPI_PORT    (spi1)
+#define LCD_DC_PIN      (8)
+#define LCD_CS_PIN      (9)
+#define LCD_CLK_PIN     (10)
+#define LCD_MOSI_PIN    (11)
+#define LCD_MISO_PIN    (12)
+#define LCD_RST_PIN     (13)
+#define LCD_BL_PIN      (25)
 
 extern uint GC9A01A_DMA_TX;
 extern dma_channel_config GC9A01A_DMA_CONFIG;

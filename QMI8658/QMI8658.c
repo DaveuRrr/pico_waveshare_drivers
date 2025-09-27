@@ -561,7 +561,7 @@ void QMI8658_doCtrl9Command(enum QMI8658_Ctrl9_Command cmd)
             break;
         }
         
-        WS_Delay_ms(10);
+        sleep_ms(10);
         timeout_count++;
     }
 
@@ -589,7 +589,7 @@ void QMI8658_doCtrl9Command(enum QMI8658_Ctrl9_Command cmd)
             return;
         }
         
-        WS_Delay_ms(10);
+        sleep_ms(10);
         timeout_count++;
     }
 
@@ -701,11 +701,6 @@ uint8_t QMI8658_init(struct QMI8658_Config configuration)
         gpio_pull_up(SENSOR_SDA_PIN);
         gpio_pull_up(SENSOR_SCL_PIN);
     }
-
-    // IRQ Config
-    gpio_init(TOUCH_INT_PIN);
-    gpio_pull_up(TOUCH_INT_PIN);
-    gpio_set_dir(TOUCH_INT_PIN, GPIO_IN);
 
     unsigned char QMI8658_chip_id = 0x00;
     unsigned char QMI8658_revision_id = 0x00;
