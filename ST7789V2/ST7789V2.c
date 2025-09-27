@@ -296,7 +296,9 @@ void ST7789V2_Set_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, ui
         ST7789V2_Send_Data_8Bit((y_end-1) >> 8);
         ST7789V2_Send_Data_8Bit(y_end-1);
     }
-    ST7789V2_Send_Command(0x2C);   
+    ST7789V2_Send_Command(0x2C);
+    gpio_put(SCREEN_DC_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 0);
 }
 
 /********************************************************************************
@@ -316,8 +318,6 @@ void ST7789V2_Clear(uint16_t color)
     }
 
     ST7789V2_Set_Windows(0, 0, ST7789V2_WIDTH, ST7789V2_HEIGHT);
-    gpio_put(SCREEN_DC_PIN, 1);
-    gpio_put(SCREEN_CS_PIN, 0);
     for (j = 0; j < ST7789V2_HEIGHT; j++) 
     {
         spi_write_blocking(SCREEN_SPI_PORT, (uint8_t *)&image[j*ST7789V2_WIDTH], ST7789V2_WIDTH*2);
@@ -334,8 +334,6 @@ void ST7789V2_Display(uint16_t *image)
     uint16_t j;
     
     ST7789V2_Set_Windows(0, 0, ST7789V2_WIDTH, ST7789V2_HEIGHT);
-    gpio_put(SCREEN_DC_PIN, 1);
-    gpio_put(SCREEN_CS_PIN, 0);
     for ( j= 0; j< ST7789V2_HEIGHT; j++) 
     {
         spi_write_blocking(SCREEN_SPI_PORT, (uint8_t *)&image[j*ST7789V2_WIDTH], ST7789V2_WIDTH*2);
@@ -378,8 +376,6 @@ void ST7789V2_DisplayWindows(uint16_t x_start, uint16_t y_start, uint16_t x_end,
     y_end = (y_end < 280)? y_end : 280;
 
     ST7789V2_Set_Windows(x_start, y_start, x_end, y_end);
-    gpio_put(SCREEN_DC_PIN, 1);
-    gpio_put(SCREEN_CS_PIN, 0);
     for (j=y_start; j<y_end-1; j++) 
     {
         address = x_start + j * ST7789V2_WIDTH;
