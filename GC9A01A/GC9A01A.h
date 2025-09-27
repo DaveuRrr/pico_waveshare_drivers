@@ -20,7 +20,10 @@
 
 #include "hardware/gpio.h"
 #include "hardware/spi.h"
+#include "hardware/pwm.h"
+#include "hardware/dma.h"
 #include "pico/time.h"
+
 
 // PINs used in GC9A01A
 #define LCD_SPI_PORT    (spi1)
