@@ -47,11 +47,11 @@ void ST7789V2_SET_PWM(uint8_t value)
 ********************************************************************************/
 static void ST7789V2_Reset(void)
 {
-    gpio_put(LCD_RST_PIN, 1);
+    gpio_put(SCREEN_RST_PIN, 1);
     sleep_ms(100);
-    gpio_put(LCD_RST_PIN, 0);
+    gpio_put(SCREEN_RST_PIN, 0);
     sleep_ms(100);
-    gpio_put(LCD_RST_PIN, 1);
+    gpio_put(SCREEN_RST_PIN, 1);
     sleep_ms(100);
 }
 
@@ -61,10 +61,10 @@ static void ST7789V2_Reset(void)
 ********************************************************************************/
 static void ST7789V2_Send_Command(uint8_t command)
 {
-    gpio_put(LCD_DC_PIN, 0);
-    gpio_put(LCD_CS_PIN, 0);
-    spi_write_blocking(LCD_SPI_PORT, command, 1);
-    gpio_put(LCD_CS_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 0);
+    gpio_put(SCREEN_CS_PIN, 0);
+    spi_write_blocking(SCREEN_SPI_PORT, command, 1);
+    gpio_put(SCREEN_CS_PIN, 1);
 }
 
 /********************************************************************************
@@ -73,10 +73,10 @@ static void ST7789V2_Send_Command(uint8_t command)
 ********************************************************************************/
 static void ST7789V2_Send_Data_8Bit(uint8_t data)
 {
-    gpio_put(LCD_DC_PIN, 1);
-    gpio_put(LCD_CS_PIN, 0);
-    spi_write_blocking(LCD_SPI_PORT, data, 1);
-    gpio_put(LCD_CS_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 0);
+    spi_write_blocking(SCREEN_SPI_PORT, data, 1);
+    gpio_put(SCREEN_CS_PIN, 1);
 }
 
 /********************************************************************************
@@ -85,11 +85,11 @@ static void ST7789V2_Send_Data_8Bit(uint8_t data)
 ********************************************************************************/
 static void ST7789V2_Send_Data_16Bit(uint16_t data)
 {
-    gpio_put(LCD_DC_PIN, 1);
-    gpio_put(LCD_CS_PIN, 0);
-    spi_write_blocking(LCD_SPI_PORT, data >> 8 & 0xFF, 1);
-    spi_write_blocking(LCD_SPI_PORT, data & 0xFF, 1);
-    gpio_put(LCD_CS_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 0);
+    spi_write_blocking(SCREEN_SPI_PORT, data >> 8 & 0xFF, 1);
+    spi_write_blocking(SCREEN_SPI_PORT, data & 0xFF, 1);
+    gpio_put(SCREEN_CS_PIN, 1);
 }
 
 /********************************************************************************
@@ -216,33 +216,33 @@ static void ST7789V2_Set_Attributes(uint8_t scan_direction)
 void ST7789V2_Init(uint8_t scan_direction)
 {
     // GPIO Config
-    ST7789V2_GPIO(LCD_RST_PIN, 1);
-    ST7789V2_GPIO(LCD_DC_PIN, 1);
-    ST7789V2_GPIO(LCD_CS_PIN, 1);
-    ST7789V2_GPIO(LCD_BL_PIN, 1);
+    ST7789V2_GPIO(SCREEN_RST_PIN, 1);
+    ST7789V2_GPIO(SCREEN_DC_PIN, 1);
+    ST7789V2_GPIO(SCREEN_CS_PIN, 1);
+    ST7789V2_GPIO(SCREEN_BL_PIN, 1);
 
-    gpio_put(LCD_CS_PIN, 1);
-    gpio_put(LCD_DC_PIN, 0);
-    // gpio_put(LCD_BL_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 0);
+    // gpio_put(SCREEN_BL_PIN, 1);
 
     // PWM Configuration
-    gpio_set_function(LCD_BL_PIN, GPIO_FUNC_PWM);
-    ST7789V2_SLICE_NUM = pwm_gpio_to_slice_num(LCD_BL_PIN);
+    gpio_set_function(SCREEN_BL_PIN, GPIO_FUNC_PWM);
+    ST7789V2_SLICE_NUM = pwm_gpio_to_slice_num(SCREEN_BL_PIN);
     pwm_set_wrap(ST7789V2_SLICE_NUM, 100);
     pwm_set_chan_level(ST7789V2_SLICE_NUM, PWM_CHAN_B, 0);
     pwm_set_clkdiv(ST7789V2_SLICE_NUM, 50);
     pwm_set_enabled(ST7789V2_SLICE_NUM, true);
 
     // SPI Configuration
-    spi_init(LCD_SPI_PORT, 270000 * 1000);
-    gpio_set_function(LCD_CLK_PIN, GPIO_FUNC_SPI);
-    gpio_set_function(LCD_MOSI_PIN, GPIO_FUNC_SPI);
+    spi_init(SCREEN_SPI_PORT, 270000 * 1000);
+    gpio_set_function(SCREEN_CLK_PIN, GPIO_FUNC_SPI);
+    gpio_set_function(SCREEN_MOSI_PIN, GPIO_FUNC_SPI);
 
     // DMA Configuration
     ST7789V2_DMA_TX = dma_claim_unused_channel(true);
     ST7789V2_DMA_CONFIG = dma_channel_get_default_config(ST7789V2_DMA_TX);
     channel_config_set_transfer_data_size(&ST7789V2_DMA_CONFIG, DMA_SIZE_8); 
-    channel_config_set_dreq(&ST7789V2_DMA_CONFIG, spi_get_dreq(LCD_SPI_PORT, true));
+    channel_config_set_dreq(&ST7789V2_DMA_CONFIG, spi_get_dreq(SCREEN_SPI_PORT, true));
 
     // Hardware reset
     ST7789V2_Reset();
@@ -314,13 +314,13 @@ void ST7789V2_Clear(uint16_t color)
     }
 
     ST7789V2_Set_Windows(0, 0, ST7789V2_WIDTH, ST7789V2_HEIGHT);
-    gpio_put(LCD_DC_PIN, 1);
-    gpio_put(LCD_CS_PIN, 0);
+    gpio_put(SCREEN_DC_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 0);
     for (j = 0; j < ST7789V2_HEIGHT; j++) 
     {
-        spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[j*ST7789V2_WIDTH], ST7789V2_WIDTH*2);
+        spi_write_blocking(SCREEN_SPI_PORT, (uint8_t *)&image[j*ST7789V2_WIDTH], ST7789V2_WIDTH*2);
     }
-    gpio_put(LCD_CS_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 1);
 }
 
 /********************************************************************************
@@ -332,14 +332,14 @@ void ST7789V2_Display(uint16_t *image)
     uint16_t j;
     
     ST7789V2_Set_Windows(0, 0, ST7789V2_WIDTH, ST7789V2_HEIGHT);
-    gpio_put(LCD_DC_PIN, 1);
-    gpio_put(LCD_CS_PIN, 0);
+    gpio_put(SCREEN_DC_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 0);
     for ( j= 0; j< ST7789V2_HEIGHT; j++) 
     {
-        spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[j*ST7789V2_WIDTH], ST7789V2_WIDTH*2);
+        spi_write_blocking(SCREEN_SPI_PORT, (uint8_t *)&image[j*ST7789V2_WIDTH], ST7789V2_WIDTH*2);
     }
-    gpio_put(LCD_CS_PIN, 1);
-    // LCD_1IN47_SendCommand(0x29);
+    gpio_put(SCREEN_CS_PIN, 1);
+    // SCREEN_1IN47_SendCommand(0x29);
 }
 
 /********************************************************************************
@@ -376,14 +376,14 @@ void ST7789V2_DisplayWindows(uint16_t x_start, uint16_t y_start, uint16_t x_end,
     y_end = (y_end < 280)? y_end : 280;
 
     ST7789V2_Set_Windows(x_start, y_start, x_end, y_end);
-    gpio_put(LCD_DC_PIN, 1);
-    gpio_put(LCD_CS_PIN, 0);
+    gpio_put(SCREEN_DC_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 0);
     for (j=y_start; j<y_end-1; j++) 
     {
         address = x_start + j * ST7789V2_WIDTH;
-        spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[address], (x_end-x_start)*2);
+        spi_write_blocking(SCREEN_SPI_PORT, (uint8_t *)&image[address], (x_end-x_start)*2);
     }
-    gpio_put(LCD_CS_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 1);
 }
 
 /********************************************************************************
