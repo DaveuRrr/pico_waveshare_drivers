@@ -18,6 +18,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "hardware/gpio.h"
+#include "hardware/spi.h"
+#include "hardware/pwm.h"
+#include "hardware/dma.h"
 #include "pico/time.h"
 
 // #define LCD_SPI_PORT
