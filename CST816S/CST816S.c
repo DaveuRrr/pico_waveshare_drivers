@@ -134,16 +134,6 @@ void CST816S_Set_Mode(uint8_t mode)
 ********************************************************************************/
 uint8_t CST816S_init(uint8_t mode)
 {
-    // Checks if I2C is up
-    if (i2c_get_baudrate(SENSOR_I2C_PORT) == 0)
-    {
-        // I2C Config
-        i2c_init(SENSOR_I2C_PORT, 400 * 1000);
-        gpio_set_function(SENSOR_SDA_PIN, GPIO_FUNC_I2C);
-        gpio_set_function(SENSOR_SCL_PIN, GPIO_FUNC_I2C);
-        gpio_pull_up(SENSOR_SDA_PIN);
-        gpio_pull_up(SENSOR_SCL_PIN);
-    }
 
     // IRQ Config
     gpio_init(TOUCH_INT_PIN);

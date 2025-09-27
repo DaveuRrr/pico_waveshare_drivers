@@ -691,17 +691,6 @@ void QMI8658_Config_Apply(struct QMI8658_Config const *config)
 ********************************************************************************/
 uint8_t QMI8658_init(struct QMI8658_Config configuration)
 {
-    // Checks if I2C is up
-    if (i2c_get_baudrate(SENSOR_I2C_PORT) == 0)
-    {
-        // I2C Config
-        i2c_init(SENSOR_I2C_PORT, 400 * 1000);
-        gpio_set_function(SENSOR_SDA_PIN, GPIO_FUNC_I2C);
-        gpio_set_function(SENSOR_SCL_PIN, GPIO_FUNC_I2C);
-        gpio_pull_up(SENSOR_SDA_PIN);
-        gpio_pull_up(SENSOR_SCL_PIN);
-    }
-
     unsigned char QMI8658_chip_id = 0x00;
     unsigned char QMI8658_revision_id = 0x00;
     unsigned char QMI8658_slave[2] = {QMI8658_SLAVE_ADDR_L, QMI8658_SLAVE_ADDR_H};

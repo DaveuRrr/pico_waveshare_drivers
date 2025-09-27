@@ -76,17 +76,6 @@ void PCF85063A_I2C_Read_Buffer(uint8_t address, uint8_t *buffer, uint32_t len)
 ********************************************************************************/
 void PCF85063A_Init()
 {
-    // Checks if I2C is up
-    if (i2c_get_baudrate(SENSOR_I2C_PORT) == 0)
-    {
-        // I2C Config
-        i2c_init(SENSOR_I2C_PORT, 400 * 1000);
-        gpio_set_function(SENSOR_SDA_PIN, GPIO_FUNC_I2C);
-        gpio_set_function(SENSOR_SCL_PIN, GPIO_FUNC_I2C);
-        gpio_pull_up(SENSOR_SDA_PIN);
-        gpio_pull_up(SENSOR_SCL_PIN);
-    }
-
     // IRQ Config
     gpio_init(RTC_INT_PIN);
     gpio_pull_up(RTC_INT_PIN);
