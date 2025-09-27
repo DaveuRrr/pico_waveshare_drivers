@@ -7,4 +7,4 @@ aux_source_directory(. DIR_PCF85063A_SRCS)
 
 # Generate link library
 add_library(PCF85063A ${DIR_PCF85063A_SRCS})
-# target_link_libraries(PCF85063A PUBLIC WaveShare)
+target_link_libraries(PCF85063A PUBLIC pico_stdlib hardware_i2c hardware_gpio)

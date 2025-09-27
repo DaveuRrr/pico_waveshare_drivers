@@ -6,4 +6,4 @@ aux_source_directory(. DIR_CST816S_SRCS)
 
 # Generate link library
 add_library(CST816S ${DIR_CST816S_SRCS})
-#target_link_libraries(CST816S PUBLIC WaveShare)
+target_link_libraries(CST816S PUBLIC pico_stdlib hardware_i2c hardware_gpio)
