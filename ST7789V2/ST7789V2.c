@@ -63,7 +63,7 @@ static void ST7789V2_Send_Command(uint8_t command)
 {
     gpio_put(SCREEN_DC_PIN, 0);
     gpio_put(SCREEN_CS_PIN, 0);
-    spi_write_blocking(SCREEN_SPI_PORT, command, 1);
+    spi_write_blocking(SCREEN_SPI_PORT, &command, 1);
     gpio_put(SCREEN_CS_PIN, 1);
 }
 
@@ -75,7 +75,7 @@ static void ST7789V2_Send_Data_8Bit(uint8_t data)
 {
     gpio_put(SCREEN_DC_PIN, 1);
     gpio_put(SCREEN_CS_PIN, 0);
-    spi_write_blocking(SCREEN_SPI_PORT, data, 1);
+    spi_write_blocking(SCREEN_SPI_PORT, &data, 1);
     gpio_put(SCREEN_CS_PIN, 1);
 }
 
@@ -87,8 +87,10 @@ static void ST7789V2_Send_Data_16Bit(uint16_t data)
 {
     gpio_put(SCREEN_DC_PIN, 1);
     gpio_put(SCREEN_CS_PIN, 0);
-    spi_write_blocking(SCREEN_SPI_PORT, data >> 8 & 0xFF, 1);
-    spi_write_blocking(SCREEN_SPI_PORT, data & 0xFF, 1);
+    uint8_t high_byte = (data >> 8) & 0xFF;
+    uint8_t low_byte = data & 0xFF;
+    spi_write_blocking(SCREEN_SPI_PORT, &high_byte, 1);
+    spi_write_blocking(SCREEN_SPI_PORT, &low_byte, 1);	
     gpio_put(SCREEN_CS_PIN, 1);
 }
 
@@ -229,7 +231,7 @@ void ST7789V2_Init(uint8_t scan_direction)
     gpio_set_function(SCREEN_BL_PIN, GPIO_FUNC_PWM);
     ST7789V2_SLICE_NUM = pwm_gpio_to_slice_num(SCREEN_BL_PIN);
     pwm_set_wrap(ST7789V2_SLICE_NUM, 100);
-    pwm_set_chan_level(ST7789V2_SLICE_NUM, PWM_CHAN_B, 0);
+    pwm_set_chan_level(ST7789V2_SLICE_NUM, PWM_CHAN_B, 60);
     pwm_set_clkdiv(ST7789V2_SLICE_NUM, 50);
     pwm_set_enabled(ST7789V2_SLICE_NUM, true);
 
