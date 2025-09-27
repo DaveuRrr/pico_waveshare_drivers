@@ -22,11 +22,29 @@
 #include "hardware/i2c.h"
 #include "pico/time.h"
 
+// Include board configuration if available
+#ifdef __has_include
+    #if __has_include("board_resources.h")
+        #include "board_resources.h"
+    #endif
+#endif
+
+// PINs used in QMI8658 - Include board_resources.h to override these defaults
+#ifndef SENSOR_I2C_PORT
 #define SENSOR_I2C_PORT (i2c1)
+#endif
+#ifndef SENSOR_SDA_PIN
 #define SENSOR_SDA_PIN  (6)
+#endif
+#ifndef SENSOR_SCL_PIN
 #define SENSOR_SCL_PIN  (7)
+#endif
+#ifndef TOUCH_INT_PIN
 #define TOUCH_INT_PIN   (21)
+#endif
+#ifndef TOUCH_RST_PIN
 #define TOUCH_RST_PIN   (22)
+#endif
 
 #define CST816_ADDR (0x15)
 

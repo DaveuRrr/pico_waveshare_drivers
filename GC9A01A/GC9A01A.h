@@ -24,16 +24,39 @@
 #include "hardware/dma.h"
 #include "pico/time.h"
 
+// Include board configuration if available
+#ifdef __has_include
+    #if __has_include("board_resources.h")
+        #include "board_resources.h"
+    #endif
+#endif
 
-// PINs used in GC9A01A
-#define LCD_SPI_PORT    (spi1)
-#define LCD_DC_PIN      (8)
-#define LCD_CS_PIN      (9)
-#define LCD_CLK_PIN     (10)
-#define LCD_MOSI_PIN    (11)
-#define LCD_MISO_PIN    (12)
-#define LCD_RST_PIN     (13)
-#define LCD_BL_PIN      (25)
+
+// PINs used in GC9A01A - Include board_resources.h to override these defaults
+#ifndef SCREEN_SPI_PORT
+#define SCREEN_SPI_PORT    (spi1)
+#endif
+#ifndef SCREEN_DC_PIN
+#define SCREEN_DC_PIN      (8)
+#endif
+#ifndef SCREEN_CS_PIN
+#define SCREEN_CS_PIN      (9)
+#endif
+#ifndef SCREEN_CLK_PIN
+#define SCREEN_CLK_PIN     (10)
+#endif
+#ifndef SCREEN_MOSI_PIN
+#define SCREEN_MOSI_PIN    (11)
+#endif
+#ifndef SCREEN_MISO_PIN
+#define SCREEN_MISO_PIN    (12)
+#endif
+#ifndef SCREEN_RST_PIN
+#define SCREEN_RST_PIN     (13)
+#endif
+#ifndef SCREEN_BL_PIN
+#define SCREEN_BL_PIN      (25)
+#endif
 
 extern uint GC9A01A_DMA_TX;
 extern dma_channel_config GC9A01A_DMA_CONFIG;

@@ -215,7 +215,6 @@ static void ST7789V2_Set_Attributes(uint8_t scan_direction)
 ********************************************************************************/
 void ST7789V2_Init(uint8_t scan_direction)
 {
-
     // GPIO Config
     ST7789V2_GPIO(LCD_RST_PIN, 1);
     ST7789V2_GPIO(LCD_DC_PIN, 1);
@@ -386,8 +385,6 @@ void ST7789V2_DisplayWindows(uint16_t x_start, uint16_t y_start, uint16_t x_end,
     }
     gpio_put(LCD_CS_PIN, 1);
 }
-
-
 
 /********************************************************************************
  * @brief           Displays a single pixel at specified coordinates

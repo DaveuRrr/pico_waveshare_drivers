@@ -44,12 +44,12 @@ void GC9A01A_SET_PWM(uint8_t value)
 ********************************************************************************/
 static void GC9A01A_Reset(void)
 {
-    gpio_put(LCD_RST_PIN, 1);
+    gpio_put(SCREEN_RST_PIN, 1);
     sleep_ms(100);
-    gpio_put(LCD_RST_PIN, 0);
+    gpio_put(SCREEN_RST_PIN, 0);
     sleep_ms(100);
-    gpio_put(LCD_RST_PIN, 1);
-    gpio_put(LCD_CS_PIN, 0);
+    gpio_put(SCREEN_RST_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 0);
     sleep_ms(100);
 }
 
@@ -59,8 +59,8 @@ static void GC9A01A_Reset(void)
 ********************************************************************************/
 static void GC9A01A_Send_Command(uint8_t command)
 {
-    gpio_put(LCD_DC_PIN, 0);
-    spi_write_blocking(LCD_SPI_PORT, &command, 1);
+    gpio_put(SCREEN_DC_PIN, 0);
+    spi_write_blocking(SCREEN_SPI_PORT, &command, 1);
 }
 
 /********************************************************************************
@@ -69,8 +69,8 @@ static void GC9A01A_Send_Command(uint8_t command)
 ********************************************************************************/
 static void GC9A01A_Send_Data_8Bit(uint8_t data)
 {
-    gpio_put(LCD_DC_PIN, 1);
-    spi_write_blocking(LCD_SPI_PORT, &data, 1);
+    gpio_put(SCREEN_DC_PIN, 1);
+    spi_write_blocking(SCREEN_SPI_PORT, &data, 1);
 }
 
 /********************************************************************************
@@ -79,11 +79,11 @@ static void GC9A01A_Send_Data_8Bit(uint8_t data)
 ********************************************************************************/
 static void GC9A01A_Send_Data_16Bit(uint16_t data)
 {
-    gpio_put(LCD_DC_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 1);
     uint8_t high_byte = data >> 8;
     uint8_t low_byte = data & 0xFF;
-    spi_write_blocking(LCD_SPI_PORT, &high_byte, 1);
-    spi_write_blocking(LCD_SPI_PORT, &low_byte, 1);	
+    spi_write_blocking(SCREEN_SPI_PORT, &high_byte, 1);
+    spi_write_blocking(SCREEN_SPI_PORT, &low_byte, 1);	
 }
 
 /********************************************************************************
@@ -363,33 +363,33 @@ static void GC9A01A_Set_Attributes(uint8_t scan_direction)
 void GC9A01A_Init(uint8_t scan_direction)
 {
     // GPIO Initialize
-    GC9A01A_GPIO(LCD_RST_PIN, 1);
-    GC9A01A_GPIO(LCD_DC_PIN, 1);
-    GC9A01A_GPIO(LCD_CS_PIN, 1);
-    GC9A01A_GPIO(LCD_BL_PIN, 1);
+    GC9A01A_GPIO(SCREEN_RST_PIN, 1);
+    GC9A01A_GPIO(SCREEN_DC_PIN, 1);
+    GC9A01A_GPIO(SCREEN_CS_PIN, 1);
+    GC9A01A_GPIO(SCREEN_BL_PIN, 1);
 
-    gpio_put(LCD_CS_PIN, 1);
-    gpio_put(LCD_DC_PIN, 0);
-    gpio_put(LCD_BL_PIN, 1);
+    gpio_put(SCREEN_CS_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 0);
+    gpio_put(SCREEN_BL_PIN, 1);
 
     // PWM Configuration
-    gpio_set_function(LCD_BL_PIN, GPIO_FUNC_PWM);
-    GC9A01A_SLICE_NUM = pwm_gpio_to_slice_num(LCD_BL_PIN);
+    gpio_set_function(SCREEN_BL_PIN, GPIO_FUNC_PWM);
+    GC9A01A_SLICE_NUM = pwm_gpio_to_slice_num(SCREEN_BL_PIN);
     pwm_set_wrap(GC9A01A_SLICE_NUM, 100);
     pwm_set_chan_level(GC9A01A_SLICE_NUM, PWM_CHAN_B, 0);
     pwm_set_clkdiv(GC9A01A_SLICE_NUM, 50);
     pwm_set_enabled(GC9A01A_SLICE_NUM, true);
 
     // SPI Configuration
-    spi_init(LCD_SPI_PORT, 270000 * 1000);
-    gpio_set_function(LCD_CLK_PIN, GPIO_FUNC_SPI);
-    gpio_set_function(LCD_MOSI_PIN, GPIO_FUNC_SPI);
+    spi_init(SCREEN_SPI_PORT, 270000 * 1000);
+    gpio_set_function(SCREEN_CLK_PIN, GPIO_FUNC_SPI);
+    gpio_set_function(SCREEN_MOSI_PIN, GPIO_FUNC_SPI);
 
     // DMA Configuration
     GC9A01A_DMA_TX = dma_claim_unused_channel(true);
     GC9A01A_DMA_CONFIG = dma_channel_get_default_config(GC9A01A_DMA_TX);
     channel_config_set_transfer_data_size(&GC9A01A_DMA_CONFIG, DMA_SIZE_8); 
-    channel_config_set_dreq(&GC9A01A_DMA_CONFIG, spi_get_dreq(LCD_SPI_PORT, true));
+    channel_config_set_dreq(&GC9A01A_DMA_CONFIG, spi_get_dreq(SCREEN_SPI_PORT, true));
 
     // Hardware reset
     GC9A01A_Reset();
@@ -425,7 +425,7 @@ void GC9A01A_Set_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uin
     GC9A01A_Send_Data_8Bit(y_end);
 
     GC9A01A_Send_Command(0X2C);
-    gpio_put(LCD_DC_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 1);
 }
 
 /********************************************************************************
@@ -445,10 +445,10 @@ void GC9A01A_Clear(uint16_t color)
     }
 
     GC9A01A_Set_Windows(0, 0, GC9A01A_WIDTH, GC9A01A_HEIGHT);
-    gpio_put(LCD_DC_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 1);
     for(j = 0; j < GC9A01A_HEIGHT; j++)
     {
-        spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[j*GC9A01A_WIDTH], GC9A01A_WIDTH*2);
+        spi_write_blocking(SCREEN_SPI_PORT, (uint8_t *)&image[j*GC9A01A_WIDTH], GC9A01A_WIDTH*2);
     }
 }
 
@@ -460,10 +460,10 @@ void GC9A01A_Display(uint16_t *image)
 {
     uint16_t j;
     GC9A01A_Set_Windows(0, 0, GC9A01A_WIDTH, GC9A01A_HEIGHT);
-    gpio_put(LCD_DC_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 1);
     for (j = 0; j < GC9A01A_HEIGHT; j++) 
     {
-        spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[j*GC9A01A_WIDTH], GC9A01A_WIDTH*2);
+        spi_write_blocking(SCREEN_SPI_PORT, (uint8_t *)&image[j*GC9A01A_WIDTH], GC9A01A_WIDTH*2);
     }
 }
 
@@ -481,11 +481,11 @@ void GC9A01A_Display_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end,
 
     uint16_t j;
     GC9A01A_Set_Windows(x_start, y_start, x_end , y_end);
-    gpio_put(LCD_DC_PIN, 1);
+    gpio_put(SCREEN_DC_PIN, 1);
     for (j = y_start; j < y_end; j++) 
     {
         address = x_start + j * GC9A01A_WIDTH ;
-        spi_write_blocking(LCD_SPI_PORT, (uint8_t *)&image[address], (x_end-x_start)*2);
+        spi_write_blocking(SCREEN_SPI_PORT, (uint8_t *)&image[address], (x_end-x_start)*2);
     }
 }
 

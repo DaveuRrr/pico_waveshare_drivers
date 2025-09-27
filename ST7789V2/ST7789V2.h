@@ -24,10 +24,38 @@
 #include "hardware/dma.h"
 #include "pico/time.h"
 
-// #define LCD_SPI_PORT
-// #define LCD_RST_PIN
-// #define LCD_CS_PIN 
-// #define LCD_DC_PIN
+// Include board configuration if available
+#ifdef __has_include
+    #if __has_include("board_resources.h")
+        #include "board_resources.h"
+    #endif
+#endif
+
+// PINs used in ST7789V2 - Include board_resources.h to override these defaults
+#ifndef SCREEN_SPI_PORT
+#define SCREEN_SPI_PORT    (spi1)
+#endif
+#ifndef SCREEN_DC_PIN
+#define SCREEN_DC_PIN      (8)
+#endif
+#ifndef SCREEN_CS_PIN
+#define SCREEN_CS_PIN      (9)
+#endif
+#ifndef SCREEN_CLK_PIN
+#define SCREEN_CLK_PIN     (10)
+#endif
+#ifndef SCREEN_MOSI_PIN
+#define SCREEN_MOSI_PIN    (11)
+#endif
+#ifndef SCREEN_MISO_PIN
+#define SCREEN_MISO_PIN    (12)
+#endif
+#ifndef SCREEN_RST_PIN
+#define SCREEN_RST_PIN     (13)
+#endif
+#ifndef SCREEN_BL_PIN
+#define SCREEN_BL_PIN      (25)
+#endif
 
 extern uint ST7789V2_DMA_TX;
 extern dma_channel_config ST7789V2_DMA_CONFIG;

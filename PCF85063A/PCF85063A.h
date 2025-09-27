@@ -19,11 +19,29 @@
 
 #include "pico/time.h"
 
+// Include board configuration if available
+#ifdef __has_include
+    #if __has_include("board_resources.h")
+        #include "board_resources.h"
+    #endif
+#endif
+
+// PINs used in PCF85063A - Include board_resources.h to override these defaults
+#ifndef SENSOR_I2C_PORT
 #define SENSOR_I2C_PORT (i2c1)
+#endif
+#ifndef RTC_I2C_PORT
 #define RTC_I2C_PORT    (i2c1)
+#endif
+#ifndef SENSOR_SDA_PIN
 #define SENSOR_SDA_PIN  (6)
+#endif
+#ifndef SENSOR_SCL_PIN
 #define SENSOR_SCL_PIN  (7)
+#endif
+#ifndef RTC_INT_PIN
 #define RTC_INT_PIN     (18)
+#endif
 
 //PCF85063A_ADDRESS
 #define PCF85063A_ADDRESS   (0x51)

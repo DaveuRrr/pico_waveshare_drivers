@@ -5,7 +5,7 @@ uint beep_slice_num;
 uint dma_tx;
 dma_channel_config c;
 
-int main() 
+void Device_Module_Init()
 {
     // Clock Config
     set_sys_clock_khz(PLL_SYS_KHZ, true);
@@ -19,11 +19,15 @@ int main()
 
     stdio_init_all();
 
-    // GPIO Config
-    ST7789V2_GPIO(LCD_RST_PIN, 1);
-    ST7789V2_GPIO(LCD_DC_PIN, 1);
-    ST7789V2_GPIO(LCD_CS_PIN, 1);
-    ST7789V2_GPIO(LCD_BL_PIN, 1);
+    // GPIO Config (GPIO_OUT 1, GPIO_IN 0)
+    gpio_init(LCD_RST_PIN);
+    gpio_set_dir(LCD_RST_PIN, GPIO_OUT);
+    gpio_init(LCD_DC_PIN);
+    gpio_set_dir(LCD_DC_PIN, GPIO_OUT);
+    gpio_init(LCD_CS_PIN);
+    gpio_set_dir(LCD_CS_PIN, GPIO_OUT);
+    gpio_init(LCD_BL_PIN);
+    gpio_set_dir(LCD_BL_PIN, GPIO_OUT);
 
     gpio_put(LCD_CS_PIN, 1);
     gpio_put(LCD_DC_PIN, 0);
