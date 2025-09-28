@@ -410,19 +410,33 @@ void GC9A01A_Init(uint8_t scan_direction)
 ********************************************************************************/
 void GC9A01A_Set_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end)
 {
-    //set the X coordinates
-    GC9A01A_Send_Command(0x2A);
-    GC9A01A_Send_Data_8Bit(0x00);
-    GC9A01A_Send_Data_8Bit(x_start);
-    GC9A01A_Send_Data_8Bit((x_end)>>8);
-    GC9A01A_Send_Data_8Bit(x_end);
+    // //set the X coordinates
+    // GC9A01A_Send_Command(0x2A);
+    // GC9A01A_Send_Data_8Bit(0x00);
+    // GC9A01A_Send_Data_8Bit(x_start);
+    // GC9A01A_Send_Data_8Bit((x_end)>>8);
+    // GC9A01A_Send_Data_8Bit(x_end);
 
-    //set the Y coordinates
+    // //set the Y coordinates
+    // GC9A01A_Send_Command(0x2B);
+    // GC9A01A_Send_Data_8Bit(0x00);
+    // GC9A01A_Send_Data_8Bit(y_start);
+    // GC9A01A_Send_Data_8Bit((y_end)>>8);
+    // GC9A01A_Send_Data_8Bit(y_end);
+
+    // set the X coordinates (Column Address Set)
+    GC9A01A_Send_Command(0x2A);
+    GC9A01A_Send_Data_8Bit(x_start >> 8);        // X start high byte
+    GC9A01A_Send_Data_8Bit(x_start & 0xFF);      // X start low byte
+    GC9A01A_Send_Data_8Bit(x_end >> 8);          // X end high byte
+    GC9A01A_Send_Data_8Bit(x_end & 0xFF);        // X end low byte
+
+    // set the Y coordinates (Row Address Set)
     GC9A01A_Send_Command(0x2B);
-    GC9A01A_Send_Data_8Bit(0x00);
-    GC9A01A_Send_Data_8Bit(y_start);
-    GC9A01A_Send_Data_8Bit((x_end)>>8);
-    GC9A01A_Send_Data_8Bit(y_end);
+    GC9A01A_Send_Data_8Bit(y_start >> 8);        // Y start high byte
+    GC9A01A_Send_Data_8Bit(y_start & 0xFF);      // Y start low byte
+    GC9A01A_Send_Data_8Bit(y_end >> 8);          // Y end high byte
+    GC9A01A_Send_Data_8Bit(y_end & 0xFF);        // Y end low byte
 
     GC9A01A_Send_Command(0X2C);
     gpio_put(SCREEN_DC_PIN, 1);

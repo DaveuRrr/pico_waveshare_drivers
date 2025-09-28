@@ -60,11 +60,13 @@
 extern uint ST7789V2_DMA_TX;
 extern dma_channel_config ST7789V2_DMA_CONFIG;
 
-#define ST7789V2_HEIGHT 280
+#define ST7789V2_HEIGHT 320 //280
 #define ST7789V2_WIDTH 240
 
 #define HORIZONTAL 0
 #define VERTICAL   1
+#define VERTICAL_FLIPPED 2
+#define HORIZONTAL_FLIPPED 3
 
 #define WHITE         0xFFFF
 #define BLACK		  0x0000

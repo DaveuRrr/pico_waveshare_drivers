@@ -192,23 +192,36 @@ static void ST7789V2_Set_Attributes(uint8_t scan_direction)
     ST7789V2.SCAN_DIR = scan_direction;
     uint8_t MemoryAccessReg = 0x00;
 
-    // Get GRAM and LCD width and height
-    if (scan_direction == HORIZONTAL) 
+    switch(scan_direction)
     {
-        ST7789V2.HEIGHT = ST7789V2_HEIGHT;
-        ST7789V2.WIDTH = ST7789V2_WIDTH;
-        MemoryAccessReg = 0XA0;
-    }
-    else 
-    {
-        ST7789V2.HEIGHT = ST7789V2_HEIGHT;
-        ST7789V2.WIDTH = ST7789V2_WIDTH;      
-        MemoryAccessReg = 0X00;
+        case VERTICAL:
+            ST7789V2.HEIGHT = ST7789V2_HEIGHT;  // Portrait: 320 height
+            ST7789V2.WIDTH = ST7789V2_WIDTH;    // Portrait: 240 width
+            MemoryAccessReg = 0X00;  // MV=0, MX=0, MY=0 (Normal orientation)
+            break;
+
+        case HORIZONTAL:
+            ST7789V2.HEIGHT = ST7789V2_WIDTH;   // Landscape: 240 height
+            ST7789V2.WIDTH = ST7789V2_HEIGHT;   // Landscape: 320 width  
+            MemoryAccessReg = 0XA0;  // MV=1, MX=0, MY=1 (X-Y Exchange + Y-Mirror)
+            break;
+
+        case VERTICAL_FLIPPED:
+            ST7789V2.HEIGHT = ST7789V2_HEIGHT;  // Portrait: 320 height
+            ST7789V2.WIDTH = ST7789V2_WIDTH;    // Portrait: 240 width
+            MemoryAccessReg = 0xC0;  // MV=0, MX=1, MY=1 (X-Mirror Y-Mirror)
+            break;
+
+        case HORIZONTAL_FLIPPED:
+            ST7789V2.HEIGHT = ST7789V2_WIDTH;   // Landscape: 240 height
+            ST7789V2.WIDTH = ST7789V2_HEIGHT;   // Landscape: 320 width  
+            MemoryAccessReg = 0x60;  // MV=1, MX=0, MY=1 (X-Y Exchange + Y-Mirror)
+            break;
     }
 
     // Set the read / write scan direction of the frame memory
-    ST7789V2_Send_Command(0x36); // MX, MY, RGB mode
-    ST7789V2_Send_Data_8Bit(MemoryAccessReg); // 0x08 set RGB
+    ST7789V2_Send_Command(0x36); // MADCTL: Memory Data Access Control
+    ST7789V2_Send_Data_8Bit(MemoryAccessReg);
 }
 
 /********************************************************************************
@@ -265,37 +278,20 @@ void ST7789V2_Init(uint8_t scan_direction)
 ********************************************************************************/
 void ST7789V2_Set_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end)
 {    
-    if (ST7789V2.SCAN_DIR == VERTICAL) 
-    { 
-        // set the X coordinates
-        ST7789V2_Send_Command(0x2A);
-        ST7789V2_Send_Data_8Bit(x_start >> 8);
-        ST7789V2_Send_Data_8Bit(x_start);
-        ST7789V2_Send_Data_8Bit((x_end-1) >> 8);
-        ST7789V2_Send_Data_8Bit(x_end-1);
+    // set the X coordinates (Column Address Set)
+    ST7789V2_Send_Command(0x2A);
+    ST7789V2_Send_Data_8Bit(x_start >> 8);        // X start high byte
+    ST7789V2_Send_Data_8Bit(x_start & 0xFF);      // X start low byte
+    ST7789V2_Send_Data_8Bit(x_end >> 8);          // X end high byte
+    ST7789V2_Send_Data_8Bit(x_end & 0xFF);        // X end low byte
 
-        // set the Y coordinates
-        ST7789V2_Send_Command(0x2B);
-        ST7789V2_Send_Data_8Bit((y_start+20) >> 8);
-        ST7789V2_Send_Data_8Bit(y_start+20);
-        ST7789V2_Send_Data_8Bit((y_end+20-1) >> 8);
-        ST7789V2_Send_Data_8Bit(y_end+20-1);
-    }
-    else { 
-        // set the X coordinates
-        ST7789V2_Send_Command(0x2A);
-        ST7789V2_Send_Data_8Bit((x_start+20) >> 8);
-        ST7789V2_Send_Data_8Bit(x_start+20);
-        ST7789V2_Send_Data_8Bit((x_end+20-1) >> 8);
-        ST7789V2_Send_Data_8Bit(x_end+20-1);
-
-        // set the Y coordinates
-        ST7789V2_Send_Command(0x2B);
-        ST7789V2_Send_Data_8Bit(y_start >> 8);
-        ST7789V2_Send_Data_8Bit(y_start);
-        ST7789V2_Send_Data_8Bit((y_end-1) >> 8);
-        ST7789V2_Send_Data_8Bit(y_end-1);
-    }
+    // set the Y coordinates (Row Address Set)
+    ST7789V2_Send_Command(0x2B);
+    ST7789V2_Send_Data_8Bit(y_start >> 8);        // Y start high byte
+    ST7789V2_Send_Data_8Bit(y_start & 0xFF);      // Y start low byte
+    ST7789V2_Send_Data_8Bit(y_end >> 8);          // Y end high byte
+    ST7789V2_Send_Data_8Bit(y_end & 0xFF);        // Y end low byte
+    
     ST7789V2_Send_Command(0x2C);
     gpio_put(SCREEN_DC_PIN, 1);
     gpio_put(SCREEN_CS_PIN, 0);
