@@ -142,8 +142,8 @@ static void GC9A01A_Init_Registers(void)
     GC9A01A_Send_Data_8Bit(0x00);
     GC9A01A_Send_Data_8Bit(0x20);
 
-    GC9A01A_Send_Command(0x36);
-    GC9A01A_Send_Data_8Bit(0x08);//Set as vertical screen
+    // GC9A01A_Send_Command(0x36);
+    // GC9A01A_Send_Data_8Bit(0x08);//Set as vertical screen
 
     GC9A01A_Send_Command(0x3A);			
     GC9A01A_Send_Data_8Bit(0x05); 
@@ -328,39 +328,51 @@ static void GC9A01A_Init_Registers(void)
 }
 
 /********************************************************************************
- * @brief           Sets display attributes and scan direction
- * @param scan_direction    Display orientation (HORIZONTAL or VERTICAL)
+ * @brief           Sets display attributes and rotation
+ * @param rotation  Display orientation 0, 90, 180, 270
 ********************************************************************************/
-static void GC9A01A_Set_Attributes(uint8_t scan_direction)
+static void GC9A01A_Set_Rotation(uint8_t rotation)
 {
     //Get the screen scan direction
-    GC9A01A.SCAN_DIR = scan_direction;
+    GC9A01A.ROTATION = rotation;
     uint8_t MemoryAccessReg = 0x08;
 
-    //Get GRAM and LCD width and height
-    if(scan_direction == HORIZONTAL) 
+    switch(rotation)
     {
-        GC9A01A.HEIGHT	= GC9A01A_HEIGHT;
-        GC9A01A.WIDTH   = GC9A01A_WIDTH;
-        MemoryAccessReg = 0Xc8;
-    } else 
-    {
-        GC9A01A.HEIGHT	= GC9A01A_WIDTH;
-        GC9A01A.WIDTH   = GC9A01A_HEIGHT;
-        MemoryAccessReg = 0X68;
-    }
+        case ROTATION_0:
+            GC9A01A.HEIGHT = GC9A01A_HEIGHT;
+            GC9A01A.WIDTH = GC9A01A_WIDTH;
+            MemoryAccessReg = 0x08;  // MV=0, MX=0, MY=0, RGB=1 (Normal orientation)
+            break;
 
+        case ROTATION_90:
+            GC9A01A.HEIGHT = GC9A01A_WIDTH;
+            GC9A01A.WIDTH = GC9A01A_HEIGHT;
+            MemoryAccessReg = 0x68;  // MV=1, MX=1, MY=0, RGB=1 (X-Y Exchange + X-Mirror)
+            break;
+
+        case ROTATION_180:
+            GC9A01A.HEIGHT = GC9A01A_HEIGHT;
+            GC9A01A.WIDTH = GC9A01A_WIDTH;
+            MemoryAccessReg = 0xC8;  // MV=0, MX=1, MY=1, RGB=1 (X-Mirror Y-Mirror)
+            break;
+
+        case ROTATION_270:
+            GC9A01A.HEIGHT = GC9A01A_WIDTH;
+            GC9A01A.WIDTH = GC9A01A_HEIGHT;
+            MemoryAccessReg = 0xA8;  // MV=1, MX=0, MY=1, RGB=1 (X-Y Exchange + Y-Mirror)
+            break;
+    }
     // Set the read / write scan direction of the frame memory
-    GC9A01A_Send_Command(0x36); //MX, MY, RGB mode
-    //GC9A01A_Send_Data_8Bit(MemoryAccessReg);	//0x08 set RGB
-    GC9A01A_Send_Data_8Bit(MemoryAccessReg);	//0x08 set RGB
+    GC9A01A_Send_Command(0x36); // MADCTL: Memory Data Access Control
+    GC9A01A_Send_Data_8Bit(MemoryAccessReg);
 }
 
 /********************************************************************************
  * @brief           Initializes GC9A01A display controller
- * @param scan_direction    Display orientation (HORIZONTAL or VERTICAL)
+ * @param rotation  Display orientation 0, 90, 180, 270
 ********************************************************************************/
-void GC9A01A_Init(uint8_t scan_direction)
+void GC9A01A_Init(uint8_t rotation)
 {
     // GPIO Initialize
     GC9A01A_GPIO(SCREEN_RST_PIN, 1);
@@ -395,7 +407,7 @@ void GC9A01A_Init(uint8_t scan_direction)
     GC9A01A_Reset();
 
     // Set the resolution and scanning method of the screen
-    GC9A01A_Set_Attributes(scan_direction);
+    GC9A01A_Set_Attributes(rotation);
 
     // Set the initialization register
     GC9A01A_Init_Registers();
@@ -410,20 +422,6 @@ void GC9A01A_Init(uint8_t scan_direction)
 ********************************************************************************/
 void GC9A01A_Set_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end)
 {
-    // //set the X coordinates
-    // GC9A01A_Send_Command(0x2A);
-    // GC9A01A_Send_Data_8Bit(0x00);
-    // GC9A01A_Send_Data_8Bit(x_start);
-    // GC9A01A_Send_Data_8Bit((x_end)>>8);
-    // GC9A01A_Send_Data_8Bit(x_end);
-
-    // //set the Y coordinates
-    // GC9A01A_Send_Command(0x2B);
-    // GC9A01A_Send_Data_8Bit(0x00);
-    // GC9A01A_Send_Data_8Bit(y_start);
-    // GC9A01A_Send_Data_8Bit((y_end)>>8);
-    // GC9A01A_Send_Data_8Bit(y_end);
-
     // set the X coordinates (Column Address Set)
     GC9A01A_Send_Command(0x2A);
     GC9A01A_Send_Data_8Bit(x_start >> 8);        // X start high byte

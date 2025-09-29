@@ -60,13 +60,14 @@
 extern uint ST7789V2_DMA_TX;
 extern dma_channel_config ST7789V2_DMA_CONFIG;
 
-#define ST7789V2_HEIGHT 320 //280
+// Display Settings
+#define ST7789V2_HEIGHT 320
 #define ST7789V2_WIDTH 240
 
-#define HORIZONTAL 0
-#define VERTICAL   1
-#define VERTICAL_FLIPPED 2
-#define HORIZONTAL_FLIPPED 3
+#define ROTATION_0      0  // Normal/Portrait
+#define ROTATION_90     1  // 90° clockwise 
+#define ROTATION_180    2  // 180° (upside down)
+#define ROTATION_270    3  // 270° clockwise (or 90° counter-clockwise)
 
 #define WHITE         0xFFFF
 #define BLACK		  0x0000
@@ -93,7 +94,7 @@ extern dma_channel_config ST7789V2_DMA_CONFIG;
 typedef struct{
     uint16_t WIDTH;
     uint16_t HEIGHT;
-    uint8_t SCAN_DIR;
+    uint8_t ROTATION;
 }ST7789V2_ATTRIBUTES;
 extern ST7789V2_ATTRIBUTES ST7789V2;
 

@@ -61,11 +61,14 @@
 extern uint GC9A01A_DMA_TX;
 extern dma_channel_config GC9A01A_DMA_CONFIG;
 
-#define GC9A01A_HEIGHT 240
-#define GC9A01A_WIDTH 240
+// Display Settings
+#define GC9A01A_HEIGHT  240
+#define GC9A01A_WIDTH   240
 
-#define HORIZONTAL 0
-#define VERTICAL   1
+#define ROTATION_0      0  // Normal/Portrait
+#define ROTATION_90     1  // 90° clockwise 
+#define ROTATION_180    2  // 180° (upside down)
+#define ROTATION_270    3  // 270° clockwise (or 90° counter-clockwise)
 
 #define WHITE         0xFFFF
 #define BLACK		  0x0000
@@ -92,7 +95,7 @@ extern dma_channel_config GC9A01A_DMA_CONFIG;
 typedef struct{
     uint16_t WIDTH;
     uint16_t HEIGHT;
-    uint8_t SCAN_DIR;
+    uint8_t ROTATION;
 }GC9A01A_ATTRIBUTES;
 extern GC9A01A_ATTRIBUTES GC9A01A;
 

@@ -183,39 +183,39 @@ static void ST7789V2_Init_Reg(void)
 }
 
 /********************************************************************************
- * @brief           Sets display attributes and scan direction
- * @param Scan_dir  Display orientation (HORIZONTAL or VERTICAL)
+ * @brief           Sets display attributes and rotation
+ * @param rotation  Display orientation 0, 90, 180, 270
 ********************************************************************************/
-static void ST7789V2_Set_Attributes(uint8_t scan_direction)
+static void ST7789V2_Set_Rotation(uint8_t rotation)
 {
     // Get the screen scan direction
-    ST7789V2.SCAN_DIR = scan_direction;
+    ST7789V2.ROTATION = rotation;
     uint8_t MemoryAccessReg = 0x00;
 
-    switch(scan_direction)
+    switch(rotation)
     {
-        case VERTICAL:
-            ST7789V2.HEIGHT = ST7789V2_HEIGHT;  // Portrait: 320 height
-            ST7789V2.WIDTH = ST7789V2_WIDTH;    // Portrait: 240 width
+        case ROTATION_0:
+            ST7789V2.HEIGHT = ST7789V2_HEIGHT;
+            ST7789V2.WIDTH = ST7789V2_WIDTH;
             MemoryAccessReg = 0X00;  // MV=0, MX=0, MY=0 (Normal orientation)
             break;
-
-        case HORIZONTAL:
-            ST7789V2.HEIGHT = ST7789V2_WIDTH;   // Landscape: 240 height
-            ST7789V2.WIDTH = ST7789V2_HEIGHT;   // Landscape: 320 width  
-            MemoryAccessReg = 0XA0;  // MV=1, MX=0, MY=1 (X-Y Exchange + Y-Mirror)
+        
+        case ROTATION_90:
+            ST7789V2.HEIGHT = ST7789V2_WIDTH;
+            ST7789V2.WIDTH = ST7789V2_HEIGHT;
+            MemoryAccessReg = 0x60;  // MV=1, MX=1, MY=0 (X-Y Exchange + X-Mirror)
             break;
 
-        case VERTICAL_FLIPPED:
-            ST7789V2.HEIGHT = ST7789V2_HEIGHT;  // Portrait: 320 height
-            ST7789V2.WIDTH = ST7789V2_WIDTH;    // Portrait: 240 width
+        case ROTATION_180:
+            ST7789V2.HEIGHT = ST7789V2_HEIGHT;
+            ST7789V2.WIDTH = ST7789V2_WIDTH;
             MemoryAccessReg = 0xC0;  // MV=0, MX=1, MY=1 (X-Mirror Y-Mirror)
             break;
 
-        case HORIZONTAL_FLIPPED:
-            ST7789V2.HEIGHT = ST7789V2_WIDTH;   // Landscape: 240 height
-            ST7789V2.WIDTH = ST7789V2_HEIGHT;   // Landscape: 320 width  
-            MemoryAccessReg = 0x60;  // MV=1, MX=0, MY=1 (X-Y Exchange + Y-Mirror)
+        case ROTATION_270:
+            ST7789V2.HEIGHT = ST7789V2_WIDTH;
+            ST7789V2.WIDTH = ST7789V2_HEIGHT; 
+            MemoryAccessReg = 0XA0;  // MV=1, MX=0, MY=1 (X-Y Exchange + Y-Mirror)
             break;
     }
 
@@ -226,9 +226,9 @@ static void ST7789V2_Set_Attributes(uint8_t scan_direction)
 
 /********************************************************************************
  * @brief           Initializes ST7789V2 display controller
- * @param scan_direction    Display orientation (HORIZONTAL or VERTICAL)
+ * @param rotation  Display orientation 0, 90, 180, 270
 ********************************************************************************/
-void ST7789V2_Init(uint8_t scan_direction)
+void ST7789V2_Init(uint8_t rotation)
 {
     // GPIO Config
     ST7789V2_GPIO(SCREEN_RST_PIN, 1);
@@ -263,7 +263,7 @@ void ST7789V2_Init(uint8_t scan_direction)
     ST7789V2_Reset();
 
     // Set the resolution and scanning method of the screen
-    ST7789V2_Set_Attributes(scan_direction);
+    ST7789V2_Set_Attributes(rotation);
 
     // Set the initialization register
     ST7789V2_Init_Reg();
@@ -346,7 +346,7 @@ void ST7789V2_Display(uint16_t *image)
  * @param y_end     Y-axis end coordinate (0-279)
  * @param image     Pointer to 16-bit RGB565 image data for the window
 ********************************************************************************/
-void ST7789V2_DisplayWindows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end, uint16_t *image)
+void ST7789V2_Display_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end, uint16_t *image)
 {
     uint16_t j, data;
     uint32_t address = 0;
