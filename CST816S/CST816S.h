@@ -46,6 +46,12 @@
 #define TOUCH_RST_PIN   (22)
 #endif
 
+// Rotation of the screen to find new X / Y Points
+#define ROTATION_0      0  // Normal/Portrait
+#define ROTATION_90     1  // 90° clockwise 
+#define ROTATION_180    2  // 180° (upside down)
+#define ROTATION_270    3  // 270° clockwise (or 90° counter-clockwise)
+
 #define CST816_ADDR (0x15)
 
 typedef enum

@@ -171,18 +171,43 @@ uint8_t CST816S_init(uint8_t mode)
  * @brief           Reads current touch point coordinates
  * @return          CST816S struct containing x,y coordinates and mode
 ********************************************************************************/
-CST816S CST816S_Get_Point()
+CST816S CST816S_Get_Point(uint8_t rotation, uint16_t width, uint16_t height)
 {
-    uint8_t x_point_h, x_point_l, y_point_h, y_point_l;
-    // CST816S_Wake_up();
+    uint8_t x_point_h = CST816S_I2C_Read(CST816_XposH);
+    uint8_t x_point_l = CST816S_I2C_Read(CST816_XposL);
+    uint8_t y_point_h = CST816S_I2C_Read(CST816_YposH);
+    uint8_t y_point_l = CST816S_I2C_Read(CST816_YposL);
 
-    x_point_h = CST816S_I2C_Read(CST816_XposH);
-    x_point_l = CST816S_I2C_Read(CST816_XposL);
-    y_point_h = CST816S_I2C_Read(CST816_YposH);
-    y_point_l = CST816S_I2C_Read(CST816_YposL);
+    uint16_t x = ((x_point_h & 0x0f) << 8) + x_point_l;
+    uint16_t y = ((y_point_h & 0x0f) << 8) + y_point_l;
 
-    Touch_CTS816.x_point = ((x_point_h & 0x0f) << 8) + x_point_l;
-    Touch_CTS816.y_point = ((y_point_h & 0x0f) << 8) + y_point_l;
+    uint16_t x_point, y_point;
+
+    switch(rotation)
+    {
+        case ROTATION_0:
+            x_point = x;
+            y_point = y;
+            break;
+        
+        case ROTATION_90:
+            x_point = width - 1 - y;
+            y_point = x;
+            break;
+        
+        case ROTATION_180:
+            x_point = width - 1 - x;
+            y_point = height - 1 - y;
+            break;
+        
+        case ROTATION_270:
+            x_point = y;
+            y_point = height - 1 - x;
+            break;
+    }
+
+    Touch_CTS816.x_point = x_point;
+    Touch_CTS816.y_point = y_point;
 
     return Touch_CTS816;
 }
