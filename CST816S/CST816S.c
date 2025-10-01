@@ -185,24 +185,24 @@ CST816S CST816S_Get_Point(uint8_t rotation, uint16_t width, uint16_t height)
 
     switch(rotation)
     {
-        case ROTATION_0:
+        case ROTATION_0:    // (x, y) => (x, y)
             x_point = x;
             y_point = y;
             break;
         
-        case ROTATION_90:
-            x_point = width - 1 - y;
-            y_point = x;
-            break;
-        
-        case ROTATION_180:
-            x_point = width - 1 - x;
-            y_point = height - 1 - y;
-            break;
-        
-        case ROTATION_270:
+        case ROTATION_90:   // (x, y) => (-y, x)
             x_point = y;
-            y_point = height - 1 - x;
+            y_point = width - x - 1;
+            break;
+        
+        case ROTATION_180:  // (x, y) => (-x, -y)
+            x_point = width - x - 1;
+            y_point = height - y - 1;
+            break;
+        
+        case ROTATION_270:  // (x, y) => (y, -x)
+            x_point = height - y - 1;
+            y_point = x;
             break;
     }
 
