@@ -1,8 +1,12 @@
 # Pico WaveShare Drivers
-A copy of WaveShare Code for their components to be used as a library. Original code contains an MIT license
+A copy of WaveShare Code for their components to be used as a library. I modified the majority of the code to be portable to any project that I or you would build. Original code contains an MIT license.
 
 #### Waveshare
-You can find information on the [RP2350-Touch-LCD-1.28 here](https://www.waveshare.com/wiki/RP2350-Touch-LCD-1.28). I grabbed the [LVGL](https://files.waveshare.com/wiki/RP2350-Touch-LCD-1.28/RP2350-Touch-LCD-1.28-LVGL.zip) version since I will be using LVGL with my projects. None of the LVGL code is here, you would need to grab it from [LVGL](https://github.com/lvgl/lvgl)
+Supported boards
+- [RP2350-Touch-LCD-1.28](https://www.waveshare.com/wiki/RP2350-Touch-LCD-1.28)
+- [RP2350-Touch-LCD-1.69](https://www.waveshare.com/wiki/RP2350-Touch-LCD-1.69)
+
+I grabbed the [LVGL](https://files.waveshare.com/wiki/RP2350-Touch-LCD-1.28/RP2350-Touch-LCD-1.28-LVGL.zip) version since I will be using LVGL with my projects. None of the LVGL code is here, you would need to grab it from [LVGL](https://github.com/lvgl/lvgl). I found that the version 8.4 works the best with this library.
 
 #### CMAKE Notes
 if you are going to include this to your project via `git` you chould include the following in your cmake.
