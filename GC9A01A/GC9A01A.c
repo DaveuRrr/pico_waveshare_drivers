@@ -33,7 +33,7 @@ static void GC9A01A_GPIO(uint16_t pin, uint16_t direction)
  * @brief           Sets the PWM to GC9A01A display
  * @param value		Set PWM to value 0-100
 ********************************************************************************/
-void GC9A01A_SET_PWM(uint8_t value)
+void GC9A01A_Set_PWM(uint8_t value)
 {
     if (value < 0 || value > 100) printf("WS_SET_PWM Error \r\n");
     else pwm_set_chan_level(GC9A01A_SLICE_NUM, PWM_CHAN_B, value);
@@ -513,3 +513,18 @@ void GC9A01A_Draw_Point(uint16_t x, uint16_t y, uint16_t color)
     GC9A01A_Send_Data_16Bit(color);
 }
 
+/********************************************************************************
+ * @brief           Put Display in a Sleep State
+********************************************************************************/
+void GC9A01A_Sleep(void)
+{
+    GC9A01A_Send_Command(0x10);
+}
+
+/********************************************************************************
+ * @brief           Put Display in a Awake State
+********************************************************************************/
+void GC9A01A_Awake(void)
+{
+    GC9A01A_Send_Command(0x11);
+}

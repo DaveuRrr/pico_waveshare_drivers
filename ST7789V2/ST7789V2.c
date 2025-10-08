@@ -36,7 +36,7 @@ static void ST7789V2_GPIO(uint16_t pin, uint16_t direction)
  * @brief           Sets the PWM to ST7789V2 display
  * @param value		Set PWM to value 0-100
 ********************************************************************************/
-void ST7789V2_SET_PWM(uint8_t value)
+void ST7789V2_Set_PWM(uint8_t value)
 {
     if (value < 0 || value > 100) printf("WS_SET_PWM Error \r\n");
     else pwm_set_chan_level(ST7789V2_SLICE_NUM, PWM_CHAN_B, value);
@@ -390,4 +390,20 @@ void ST7789V2_Draw_Point(uint16_t x, uint16_t y, uint16_t color)
 {
     ST7789V2_Set_Windows(x, y, x, y);
     ST7789V2_Send_Data_16Bit(color);
+}
+
+/********************************************************************************
+ * @brief           Put Display in a Sleep State
+********************************************************************************/
+void ST7789V2_Sleep(void)
+{
+    ST7789V2_Send_Command(0x10);
+}
+
+/********************************************************************************
+ * @brief           Put Display in a Awake State
+********************************************************************************/
+void ST7789V2_Awake(void)
+{
+    ST7789V2_Send_Command(0x11);
 }

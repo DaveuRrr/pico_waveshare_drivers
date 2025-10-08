@@ -103,9 +103,13 @@ function:   Macro definition variable name
 ********************************************************************************/
 void ST7789V2_Init(uint8_t scan_direction);
 void ST7789V2_Clear(uint16_t color);
+void ST7789V2_Set_PWM(uint8_t value);
 void ST7789V2_Display(uint16_t *image);
 void ST7789V2_Display_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end, uint16_t *image);
 void ST7789V2_Set_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end);
 void ST7789V2_Draw_Point(uint16_t x, uint16_t y, uint16_t color);
+
+void ST7789V2_Sleep(void);
+void ST7789V2_Awake(void);
 
 #endif

@@ -104,9 +104,13 @@ function:	Macro definition variable name
 ********************************************************************************/
 void GC9A01A_Init(uint8_t scan_direction);
 void GC9A01A_Clear(uint16_t color);
+void GC9A01A_Set_PWM(uint8_t value);
 void GC9A01A_Display(uint16_t *image);
 void GC9A01A_Display_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end, uint16_t *image);
 void GC9A01A_Set_Windows(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end);
 void GC9A01A_Draw_Point(uint16_t x, uint16_t y, uint16_t color);
+
+void GC9A01A_Sleep(void);
+void GC9A01A_Awake(void);
 
 #endif

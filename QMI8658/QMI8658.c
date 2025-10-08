@@ -824,14 +824,14 @@ void QMI8658_Disable_Pedometer(void)
  * @brief           Reads current step count from pedometer
  * @param stepCount Pointer to store step count value
 ********************************************************************************/
-void QMI8658_Read_Step_Count(unsigned int *stepCount)
+void QMI8658_Read_Step_Count(unsigned int *step_count)
 {
     unsigned char buf[3];
 
-    if (stepCount)
+    if (step_count)
     {
         QMI8658_I2C_Read_Buffer(QMI8658_Register_STEP_CNT_LOW, buf, 3);
-        *stepCount = (unsigned int)buf[0] | 
+        *step_count = (unsigned int)buf[0] | 
                     ((unsigned int)buf[1] << 8) | 
                     ((unsigned int)buf[2] << 16);
     }
