@@ -263,7 +263,7 @@ void ST7789V2_Init(uint8_t rotation)
     ST7789V2_Reset();
 
     // Set the resolution and scanning method of the screen
-    ST7789V2_Set_Attributes(rotation);
+    ST7789V2_Set_Rotation(rotation);
 
     // Set the initialization register
     ST7789V2_Init_Reg();

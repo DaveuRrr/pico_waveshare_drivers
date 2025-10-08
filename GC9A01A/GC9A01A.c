@@ -407,7 +407,7 @@ void GC9A01A_Init(uint8_t rotation)
     GC9A01A_Reset();
 
     // Set the resolution and scanning method of the screen
-    GC9A01A_Set_Attributes(rotation);
+    GC9A01A_Set_Rotation(rotation);
 
     // Set the initialization register
     GC9A01A_Init_Registers();
