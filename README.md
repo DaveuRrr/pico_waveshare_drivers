@@ -1,31 +1,29 @@
 # Pico WaveShare Drivers
-A copy of WaveShare Code for their components to be used as a library. Original code contains an MIT license
+A copy of WaveShare Code for their components to be used as a library. I modified the majority of the code to be portable to any project that I or you would build. Original code contains an MIT license.
 
 #### Waveshare
-You can find information on the [RP2350-Touch-LCD-1.28 here](https://www.waveshare.com/wiki/RP2350-Touch-LCD-1.28). I grabbed the [LVGL](https://files.waveshare.com/wiki/RP2350-Touch-LCD-1.28/RP2350-Touch-LCD-1.28-LVGL.zip) version since I will be using LVGL with my projects. None of the LVGL code is here, you would need to grab it from [LVGL](https://github.com/lvgl/lvgl)
+Supported boards
+- [RP2350-Touch-LCD-1.28](https://www.waveshare.com/wiki/RP2350-Touch-LCD-1.28)
+- [RP2350-Touch-LCD-1.69](https://www.waveshare.com/wiki/RP2350-Touch-LCD-1.69)
+
+I grabbed the [LVGL](https://files.waveshare.com/wiki/RP2350-Touch-LCD-1.28/RP2350-Touch-LCD-1.28-LVGL.zip) version since I will be using LVGL with my projects. None of the LVGL code is here, you would need to grab it from [LVGL](https://github.com/lvgl/lvgl). I found that the version 8.4 works the best with this library.
 
 #### CMAKE Notes
 if you are going to include this to your project via `git` you chould include the following in your cmake.
 ```cmake
-# Add compilation subdirectory
-add_subdirectory(./lib/WaveShare)
-add_subdirectory(./lib/GC9A01A)
-add_subdirectory(./lib/CST816S)
-add_subdirectory(./lib/QMI8658)
+  # Compilation subdirectory for Waveshare
+  add_subdirectory(../../lib/pico_waveshare_drivers/GC9A01A GC9A01A)
+  add_subdirectory(../../lib/pico_waveshare_drivers/CST816S CST816S)
+  add_subdirectory(../../lib/pico_waveshare_drivers/QMI8658 QMI8658)
 
-include_directories(./lib/WaveShare)
-include_directories(./lib/GC9A01A)
-include_directories(./lib/CST816S)
-include_directories(./lib/QMI8658)
-
-target_link_libraries(WaveshareDriversLibrary
-                      WaveShare
-                      GC9A01A
-                      CST816S
-                      QMI8658
-                      pico_stdlib
-                      hardware_spi
-                      hardware_i2c
-                      hardware_dma
-                      )
+  # Board Configurations ...
+  include_directories(${CMAKE_CURRENT_LIST_DIR}) # board_resources.h
+  
+  # Make board_resources.h available to all libraries
+  target_include_directories(GC9A01A PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+  target_include_directories(CST816S PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+  target_include_directories(QMI8658 PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+  include_directories(../../lib/pico_waveshare_drivers/GC9A01A)
+  include_directories(../../lib/pico_waveshare_drivers/CST816S)
+  include_directories(../../lib/pico_waveshare_drivers/QMI8658)
 ```
