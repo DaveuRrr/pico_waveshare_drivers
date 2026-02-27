@@ -656,6 +656,8 @@ void QMI8658_Config_Apply(struct QMI8658_Config const *config)
     // Configure pedometer FIRST if needed (before accelerometer)
     if (config->enablePedometer)
     {
+        // Pedometer configuration requires sensors to be disabled
+        QMI8658_Enable_Sensors(QMI8658_CTRL7_DISABLE_ALL);
         QMI8658_Config_Pedometer(&config->pedoConfig);
         QMI8658_Enable_Pedometer();
     }
@@ -768,13 +770,20 @@ uint8_t QMI8658_init(struct QMI8658_Config configuration)
 ********************************************************************************/
 void QMI8658_Config_Pedometer(struct QMI8658_PedoConfig const *config)
 {
+    // Disable Sync Sample Mode
+    uint8_t ctrl7_data;
+    QMI8658_I2C_Read_Buffer(QMI8658_Register_Ctrl7, &ctrl7_data, 1);
+    ctrl7_data &= ~(1 << 7);
+    QMI8658_I2C_Write(QMI8658_Register_Ctrl7, ctrl7_data);
+
     // First phase: Send first set of parameters
     QMI8658_I2C_Write(QMI8658_Register_Cal1_L, config->sample_count);
-    QMI8658_I2C_Write(QMI8658_Register_Cal1_H, config->sample_count);
+    QMI8658_I2C_Write(QMI8658_Register_Cal1_H, 0x00); // config->sample_count);
     QMI8658_I2C_Write(QMI8658_Register_Cal2_L, config->fix_peak2peak);
-    QMI8658_I2C_Write(QMI8658_Register_Cal2_H, config->fix_peak2peak);
+    QMI8658_I2C_Write(QMI8658_Register_Cal2_H, 0x00); // config->fix_peak2peak);
     QMI8658_I2C_Write(QMI8658_Register_Cal3_L, config->fix_peak);
-    QMI8658_I2C_Write(QMI8658_Register_Cal3_H, config->fix_peak);
+    QMI8658_I2C_Write(QMI8658_Register_Cal3_H, 0x00); // config->fix_peak);
+    QMI8658_I2C_Write(QMI8658_Register_Cal4_L, 0x02);
     QMI8658_I2C_Write(QMI8658_Register_Cal4_H, 0x01);  // First phase marker
 
     // Trigger first CTRL9 command
@@ -782,11 +791,12 @@ void QMI8658_Config_Pedometer(struct QMI8658_PedoConfig const *config)
 
     // Second phase: Send pedometer control configuration
     QMI8658_I2C_Write(QMI8658_Register_Cal1_L, config->time_up);
-    QMI8658_I2C_Write(QMI8658_Register_Cal1_H, config->time_up);
+    QMI8658_I2C_Write(QMI8658_Register_Cal1_H, 0x00); // config->time_up);
     QMI8658_I2C_Write(QMI8658_Register_Cal2_L, config->time_low);
-    QMI8658_I2C_Write(QMI8658_Register_Cal2_H, config->time_count_entry);
+    QMI8658_I2C_Write(QMI8658_Register_Cal2_H, 0x00); // config->time_count_entry);
     QMI8658_I2C_Write(QMI8658_Register_Cal3_L, config->fix_precision);
-    QMI8658_I2C_Write(QMI8658_Register_Cal3_H, config->signal_count);
+    QMI8658_I2C_Write(QMI8658_Register_Cal3_H, 0x00); // config->signal_count);
+    QMI8658_I2C_Write(QMI8658_Register_Cal4_L, 0x02);
     QMI8658_I2C_Write(QMI8658_Register_Cal4_H, 0x02);  // Second phase marker
 
     // Trigger second CTRL9 command
@@ -801,11 +811,10 @@ void QMI8658_Enable_Pedometer(void)
     unsigned char ctrl_data;
 
     QMI8658_I2C_Read_Buffer(QMI8658_Register_Ctrl8, &ctrl_data, 1);
-    ctrl_data |= QMI8658_PedoMode_Enable;
-    QMI8658_I2C_Write(QMI8658_Register_Ctrl8, ctrl_data);
+    ctrl_data |= QMI8658_PedoMode_Enable; // (1 << 4);
+    ctrl_data |= QMI8658_PedoTimeMode_Enable;
 
-    //QMI8658_Config_Acc(QMI8658_AccRange_4g, QMI8658_AccOdr_125Hz, QMI8658_Lpf_Enable, QMI8658_St_Disable);
-    //QMI8658_Enable_Sensors(QMI8658_CONFIG_ACC_ENABLE);
+    QMI8658_I2C_Write(QMI8658_Register_Ctrl8, ctrl_data);
 }
 
 /********************************************************************************
@@ -850,7 +859,7 @@ void QMI8658_Reset_Step_Count(void)
 /********************************************************************************
  * @brief           Configures pedometer interrupt settings
 ********************************************************************************/
-void QMI8658_Config_Pedometer_interrupt(void)
+void QMI8658_Config_Pedometer_Interrupt(void)
 {
     unsigned char ctrl1_data, ctrl8_data;
 
@@ -868,7 +877,7 @@ void QMI8658_Config_Pedometer_interrupt(void)
     // - Set bit 6 = 1 to route pedometer interrupt to INT1 
     // - Set bit 7 = 0 to enable INT1 interrupt output
     ctrl8_data |= 0x40;   // CTRL8.bit6 = 1 (route to INT1)
-    ctrl8_data &= ~0x80;  // CTRL8.bit7 = 0 (enable INT1 output)
+    ctrl8_data |= 0x80;   // CTRL8.bit7 = 1 (enable INT1 output)
     QMI8658_I2C_Write(QMI8658_Register_Ctrl8, ctrl8_data);
 
     printf("[Debug] Pedometer interrupt configured - CTRL1: 0x%02x, CTRL8: 0x%02x\n", 

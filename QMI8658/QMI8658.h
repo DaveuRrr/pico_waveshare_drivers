@@ -407,8 +407,8 @@ enum QMI8658_WakeOnMotionThreshold
 
 enum QMI8658_PedoMode
 {
-    QMI8658_PedoMode_Disable = 0x00,  /*! \brief Disable pedometer. */
-    QMI8658_PedoMode_Enable = 0x01    /*! \brief Enable pedometer. */
+    QMI8658_PedoMode_Disable = 0x00,   /*! \brief Disable pedometer. */
+    QMI8658_PedoMode_Enable = (1 << 4) /*! \brief Enable pedometer. */
 };
 
 enum QMI8658_PedoFixPeakMode
@@ -477,5 +477,29 @@ void QMI8658_Disable_Pedometer(void);
 void QMI8658_Read_Step_Count(unsigned int *stepCount);
 void QMI8658_Reset_Step_Count(void);
 void QMI8658_Check_Pedometer_Interrupt(void);
+
+// Recommendation Settings
+// struct QMI8658_Config qmi8658_config;
+// struct QMI8658_PedoConfig pedo_config;
+// qmi8658_config.inputSelection = QMI8658_CONFIG_ACC_ENABLE;
+// qmi8658_config.accRange = QMI8658_AccRange_2g;
+// qmi8658_config.accOdr = QMI8658_AccOdr_62_5Hz;
+// qmi8658_config.gyrRange = QMI8658_GyrRange_512dps;
+// qmi8658_config.gyrOdr = QMI8658_GyrOdr_1000Hz;
+// qmi8658_config.magDev = QMI8658_MagDev_AKM09918;
+// qmi8658_config.magOdr = QMI8658_MagOdr_125Hz;
+// qmi8658_config.aeOdr = QMI8658_AeOdr_128Hz;
+
+// qmi8658_config.enablePedometer = 1;
+// pedo_config.sample_count = 50;
+// pedo_config.fix_peak2peak = 200;
+// pedo_config.fix_peak = 100;
+// pedo_config.time_up = 200;
+// pedo_config.time_low = 20;
+// pedo_config.time_count_entry = 10;
+// pedo_config.fix_precision = 0;
+// pedo_config.signal_count = 4;
+
+// qmi8658_config.pedoConfig = pedo_config;
 
 #endif
