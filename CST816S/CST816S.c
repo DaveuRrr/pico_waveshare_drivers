@@ -12,7 +12,7 @@
 
 #include "CST816S.h"
 
-CST816S Touch_CTS816;
+CST816S_ATTRIBUTES CST816S;
 
 /********************************************************************************
  * @brief           Writes a value to CST816S I2C register
@@ -81,7 +81,7 @@ uint8_t CST816S_Read_Revision()
 /********************************************************************************
  * @brief           Wakes up CST816S from sleep mode
 ********************************************************************************/
-void CST816S_Wake_up()
+void CST816S_Wake_Up()
 {
     gpio_put(TOUCH_RST_PIN, 0);
     sleep_ms(10);
@@ -108,17 +108,17 @@ void CST816S_Set_Mode(uint8_t mode)
     {
         // 
         CST816S_I2C_Write(CST816_IrqCtl, 0x41);    
-        Touch_CTS816.x_point = 0;
-        Touch_CTS816.y_point = 0;
-        Touch_CTS816.mode = mode;
+        CST816S.x_point = 0;
+        CST816S.y_point = 0;
+        CST816S.mode = mode;
     }
     else if (mode == CST816S_Gesture_Mode)
     {
         CST816S_I2C_Write(CST816_IrqCtl, 0X11);
         CST816S_I2C_Write(CST816_MotionMask, 0x01);
-        Touch_CTS816.x_point = 0;
-        Touch_CTS816.y_point = 0;
-        Touch_CTS816.mode = mode;
+        CST816S.x_point = 0;
+        CST816S.y_point = 0;
+        CST816S.mode = mode;
     }
     else
     {
@@ -157,12 +157,12 @@ uint8_t CST816S_init(uint8_t mode)
     }
 
     CST816S_Set_Mode(mode);
-    Touch_CTS816.x_point = 0;
-    Touch_CTS816.y_point = 0;
+    CST816S.x_point = 0;
+    CST816S.y_point = 0;
     CST816S_I2C_Write(CST816_IrqPluseWidth, 0x01);
     CST816S_I2C_Write(CST816_NorScanPer, 0x01);
     
-    Touch_CTS816.mode = mode;
+    CST816S.mode = mode;
 
     return true;
 }
@@ -171,7 +171,7 @@ uint8_t CST816S_init(uint8_t mode)
  * @brief           Reads current touch point coordinates
  * @return          CST816S struct containing x,y coordinates and mode
 ********************************************************************************/
-CST816S CST816S_Get_Point(uint8_t rotation, uint16_t width, uint16_t height)
+CST816S_ATTRIBUTES CST816S_Get_Point(uint8_t rotation, uint16_t width, uint16_t height)
 {
     uint8_t x_point_h = CST816S_I2C_Read(CST816_XposH);
     uint8_t x_point_l = CST816S_I2C_Read(CST816_XposL);
@@ -206,10 +206,10 @@ CST816S CST816S_Get_Point(uint8_t rotation, uint16_t width, uint16_t height)
             break;
     }
 
-    Touch_CTS816.x_point = x_point;
-    Touch_CTS816.y_point = y_point;
+    CST816S.x_point = x_point;
+    CST816S.y_point = y_point;
 
-    return Touch_CTS816;
+    return CST816S;
 }
 
 /********************************************************************************

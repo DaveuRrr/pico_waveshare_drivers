@@ -120,15 +120,18 @@ typedef struct
     uint16_t x_point;
     uint16_t y_point;
     CST816S_Mode mode;
-} CST816S;
+} CST816S_ATTRIBUTES;
 
-extern CST816S Touch_CTS816;
+extern CST816S_ATTRIBUTES CTS816S;
 
 uint8_t CST816S_init(uint8_t mode);
 uint8_t CST816S_Get_Gesture(void);
 uint8_t CST816S_I2C_Read(uint8_t reg);
-CST816S CST816S_Get_Point(uint8_t rotation, uint16_t width, uint16_t height);
+CST816S_ATTRIBUTES CST816S_Get_Point(uint8_t rotation, uint16_t width, uint16_t height);
 
+void CST816S_Reset();
+void CST816S_Wake_Up();
+void CST816S_Stop_Sleep();
 void CST816S_Set_Mode(uint8_t mode);
 
 #endif
