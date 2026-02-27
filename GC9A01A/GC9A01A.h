@@ -96,7 +96,8 @@ typedef struct{
     uint16_t WIDTH;
     uint16_t HEIGHT;
     uint8_t ROTATION;
-}GC9A01A_ATTRIBUTES;
+} GC9A01A_ATTRIBUTES;
+
 extern GC9A01A_ATTRIBUTES GC9A01A;
 
 /********************************************************************************

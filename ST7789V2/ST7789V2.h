@@ -95,7 +95,8 @@ typedef struct{
     uint16_t WIDTH;
     uint16_t HEIGHT;
     uint8_t ROTATION;
-}ST7789V2_ATTRIBUTES;
+} ST7789V2_ATTRIBUTES;
+
 extern ST7789V2_ATTRIBUTES ST7789V2;
 
 /********************************************************************************
