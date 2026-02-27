@@ -851,9 +851,7 @@ void QMI8658_Read_Step_Count(unsigned int *step_count)
 ********************************************************************************/
 void QMI8658_Reset_Step_Count(void)
 {
-    QMI8658_I2C_Write(QMI8658_Register_STEP_CNT_LOW, 0x00);
-    QMI8658_I2C_Write(QMI8658_Register_STEP_CNT_MIDL, 0x00);
-    QMI8658_I2C_Write(QMI8658_Register_STEP_CNT_HIGH, 0x00);
+    QMI8658_doCtrl9Command(QMI8658_Ctrl9_Cmd_ResetPedometer);
 }
 
 /********************************************************************************

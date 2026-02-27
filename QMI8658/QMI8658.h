@@ -189,6 +189,7 @@ enum QMI8658_Ctrl9_Command
     QMI8658_Ctrl9_Cmd_AccelHostDeltaOffset = 0x09,
     QMI8658_Ctrl9_Cmd_GyroHostDeltaOffset = 0x0A,
     QMI8658_Ctrl9_Cmd_ConfigurePedometer = 0x0D,
+    QMI8658_Ctrl9_Cmd_ResetPedometer = 0x0F,
     QMI8658_Ctrl9_Cmd_Dbg_WoM_Data_Enable = 0xF8,
 
 };
