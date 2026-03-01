@@ -12,6 +12,7 @@
 
 // #include "stdafx.h"
 #include "QMI8658.h"
+#include <string.h>
 
 #define QMI8658_SLAVE_ADDR_L 0x6a
 #define QMI8658_SLAVE_ADDR_H 0x6b
@@ -367,11 +368,16 @@ void QMI8658_Read_Acc_XYZ(float acc_xyz[3])
 {
     unsigned char buf_reg[6];
     short raw_acc_xyz[3];
+    // unsigned char status0;
 
+    // status0 = QMI8658_Read_Status0();
     QMI8658_I2C_Read_Buffer(QMI8658_Register_Ax_L, buf_reg, 6); // 0x19, 25
     raw_acc_xyz[0] = (short)((unsigned short)(buf_reg[1] << 8) | (buf_reg[0]));
     raw_acc_xyz[1] = (short)((unsigned short)(buf_reg[3] << 8) | (buf_reg[2]));
     raw_acc_xyz[2] = (short)((unsigned short)(buf_reg[5] << 8) | (buf_reg[4]));
+
+    // printf("[Debug] STATUS0=0x%02x acc_lsb_div=%d raw_acc=[%d,%d,%d]\n",
+    //    status0, acc_lsb_div, raw_acc_xyz[0], raw_acc_xyz[1], raw_acc_xyz[2]);
 
     acc_xyz[0] = (raw_acc_xyz[0] * ONE_G) / acc_lsb_div;
     acc_xyz[1] = (raw_acc_xyz[1] * ONE_G) / acc_lsb_div;
@@ -653,15 +659,6 @@ void QMI8658_Enable_Sensors(unsigned char enable_flags)
 ********************************************************************************/
 void QMI8658_Config_Apply(struct QMI8658_Config const *config)
 {
-    // Configure pedometer FIRST if needed (before accelerometer)
-    if (config->enablePedometer)
-    {
-        // Pedometer configuration requires sensors to be disabled
-        QMI8658_Enable_Sensors(QMI8658_CTRL7_DISABLE_ALL);
-        QMI8658_Config_Pedometer(&config->pedoConfig);
-        QMI8658_Enable_Pedometer();
-    }
-    // Fusion / Inertia Sensors
     if (config->inputSelection & QMI8658_CONFIG_AE_ENABLE)
     {
         QMI8658_Config_AE(config->aeOdr);
@@ -676,6 +673,13 @@ void QMI8658_Config_Apply(struct QMI8658_Config const *config)
         {
             QMI8658_Config_Gyro(config->gyrRange, config->gyrOdr, QMI8658_Lpf_Enable, QMI8658_St_Disable);
         }
+    }
+
+    if (config->enablePedometer)
+    {
+        QMI8658_Enable_Sensors(QMI8658_CTRL7_DISABLE_ALL);
+        QMI8658_Config_Pedometer(&config->pedoConfig);
+        QMI8658_Enable_Pedometer();
     }
 
     if (config->inputSelection & QMI8658_CONFIG_MAG_ENABLE)
@@ -793,9 +797,9 @@ void QMI8658_Config_Pedometer(struct QMI8658_PedoConfig const *config)
     QMI8658_I2C_Write(QMI8658_Register_Cal1_L, config->time_up);
     QMI8658_I2C_Write(QMI8658_Register_Cal1_H, 0x00); // config->time_up);
     QMI8658_I2C_Write(QMI8658_Register_Cal2_L, config->time_low);
-    QMI8658_I2C_Write(QMI8658_Register_Cal2_H, 0x00); // config->time_count_entry);
+    QMI8658_I2C_Write(QMI8658_Register_Cal2_H, config->time_count_entry);
     QMI8658_I2C_Write(QMI8658_Register_Cal3_L, config->fix_precision);
-    QMI8658_I2C_Write(QMI8658_Register_Cal3_H, 0x00); // config->signal_count);
+    QMI8658_I2C_Write(QMI8658_Register_Cal3_H, config->signal_count);
     QMI8658_I2C_Write(QMI8658_Register_Cal4_L, 0x02);
     QMI8658_I2C_Write(QMI8658_Register_Cal4_H, 0x02);  // Second phase marker
 
@@ -840,9 +844,20 @@ void QMI8658_Read_Step_Count(unsigned int *step_count)
     if (step_count)
     {
         QMI8658_I2C_Read_Buffer(QMI8658_Register_STEP_CNT_LOW, buf, 3);
-        *step_count = (unsigned int)buf[0] | 
-                    ((unsigned int)buf[1] << 8) | 
+        *step_count = (unsigned int)buf[0] |
+                    ((unsigned int)buf[1] << 8) |
                     ((unsigned int)buf[2] << 16);
+
+        // // Debug: Read control registers to verify configuration
+        // unsigned char ctrl8_debug, ctrl2_debug, ctrl7_debug;
+        // QMI8658_I2C_Read_Buffer(QMI8658_Register_Ctrl2, &ctrl2_debug, 1);
+        // QMI8658_I2C_Read_Buffer(QMI8658_Register_Ctrl7, &ctrl7_debug, 1);
+        // QMI8658_I2C_Read_Buffer(QMI8658_Register_Ctrl8, &ctrl8_debug, 1);
+
+        // printf("[Debug] CTRL2=0x%02x CTRL7=0x%02x CTRL8=0x%02x (bit4=%d bit3=%d)\n",
+        //        ctrl2_debug, ctrl7_debug, ctrl8_debug,
+        //        (ctrl8_debug >> 4) & 1,  // Pedometer enable bit
+        //        (ctrl8_debug >> 3) & 1); // Time mode bit
     }
 }
 
